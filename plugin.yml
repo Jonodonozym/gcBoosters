@@ -1,0 +1,6 @@
+main: jdz.bukkitUtils.JonosBukkitUtils
+name: gcBoosters
+version: 1.0
+author: Jonodonozym
+description: Platform for setting up, distributing, queuing and running boosters from other plugins.
+softdepend: [JBU, PlaceholderAPI]
