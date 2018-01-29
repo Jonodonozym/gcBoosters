@@ -9,11 +9,12 @@ import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 
 import jdz.bukkitUtils.misc.Config;
+import jdz.bukkitUtils.misc.utils.ColorUtils;
 import jdz.gcBoosters.data.Booster;
 
 public class BoosterConfig {
 
-	public static String server = "default";
+	public static String serverGroup = "default";
 	
 	public static String returnCommand = "";
 	public static Material noBoostersIcon = Material.PAPER;
@@ -22,16 +23,17 @@ public class BoosterConfig {
 			.unmodifiableList(Arrays.asList(ChatColor.GRAY + "You don't have any boosters"));
 	
 	public static boolean broadcast = true;
-	public static String[] broadcastMessages = new String[] {"%player% has activated a %booster% booster"};
+	public static String[] broadcastStartMessages = new String[] {"%player% has activated a %booster% booster"};
+	public static String[] broadcastEndMessages = new String[] {"%player%'s %booster% booster has ended"};
 	public static boolean clickableTip = false;
 	public static String clickableTipMessage = "";
 
 	public static void reload(GCBoosters plugin) {
 		FileConfiguration config = Config.getConfig(GCBoosters.instance);
 		
-		server = config.getString("server");
-		if (server.equals(""))
-			server = "default";
+		serverGroup = config.getString("serverGroup");
+		if (serverGroup.equals(""))
+			serverGroup = "default";
 
 		returnCommand = config.getString("settings.returnCommand");
 		try {
@@ -41,15 +43,16 @@ public class BoosterConfig {
 					+ "' in config.yml, defaulting to paper");
 			noBoostersIcon = Material.PAPER;
 		}
-		noBoostersName = config.getString("settings.noBoostersName");
+		noBoostersName = ColorUtils.translate(config.getString("settings.noBoostersName"));
 		
 		noBoostersLore = Collections
-				.unmodifiableList(config.getStringList("settings.noBoosterLore"));
+				.unmodifiableList(ColorUtils.translate(config.getStringList("settings.noBoosterLore")));
 
 		broadcast = config.getBoolean("settings.broadcast");
-		broadcastMessages = config.getStringList("settings.broadcastMessages").toArray(new String[1]);
+		broadcastStartMessages = ColorUtils.translate(config.getStringList("settings.broadcastStartMessages").toArray(new String[1]));
+		broadcastEndMessages = ColorUtils.translate(config.getStringList("settings.broadcastEndMessages").toArray(new String[1]));
 		clickableTip = config.getBoolean("settings.clickableTip");
-		clickableTipMessage = config.getString("settings.clickableTipMessage");
+		clickableTipMessage = ColorUtils.translate(config.getString("settings.clickableTipMessage"));
 		
 		Booster.clearBoosters();
 		for(String boosterName: config.getConfigurationSection("boosters").getKeys(false))

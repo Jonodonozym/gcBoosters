@@ -1,6 +1,22 @@
 package jdz.gcBoosters;
 
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventException;
+import org.bukkit.event.HandlerList;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.plugin.PluginManager;
+import org.bukkit.plugin.RegisteredListener;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import jdz.bukkitUtils.fileIO.FileLogger;
+import jdz.gcBoosters.commands.admin.ABoosterCommandExecutor;
+import jdz.gcBoosters.commands.member.BoosterCommandExecutor;
+import jdz.gcBoosters.data.BoosterDatabase;
+import jdz.gcBoosters.hooks.PlaceholderHook;
+import jdz.gcBoosters.tasks.BoosterBroadcaster;
+import jdz.gcBoosters.tasks.BoosterQueueChecker;
+import me.clip.placeholderapi.PlaceholderAPI;
 
 public class GCBoosters extends JavaPlugin{
 	public static GCBoosters instance;
@@ -8,10 +24,32 @@ public class GCBoosters extends JavaPlugin{
 	@Override
 	public void onEnable() {
 		instance = this;
+		
+		BoosterConfig.reload(this);
+		
+		new BoosterCommandExecutor(this).register();
+		new ABoosterCommandExecutor(this).register();
+		
+		BoosterDatabase.getInstance();
+		
+		PluginManager pm = Bukkit.getPluginManager();
+		pm.registerEvents(new BoosterBroadcaster(), this);
+		
+		BoosterQueueChecker.getInstance();
+		
+		for (Player p: Bukkit.getOnlinePlayers())
+		for (RegisteredListener l: HandlerList.getRegisteredListeners(this))
+			try {
+				l.callEvent(new PlayerJoinEvent(p, ""));
+			} catch (EventException e) {
+				new FileLogger(this).createErrorLog(e);
+			}
+		
+		PlaceholderAPI.registerPlaceholderHook(this, new PlaceholderHook());
 	}
 	
 	@Override
 	public void onDisable() {
-		// TODO Save queued boosters... or not :/
+		
 	}
 }

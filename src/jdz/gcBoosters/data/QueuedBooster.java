@@ -9,6 +9,5 @@ import lombok.Data;
 public class QueuedBooster {
 	private final Booster booster;
 	private final OfflinePlayer player;
-	
-	private long endTime = Long.MAX_VALUE;
+	private Long startTime = Long.MAX_VALUE;
 }

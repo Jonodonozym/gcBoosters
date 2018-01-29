@@ -15,25 +15,29 @@ import org.bukkit.event.Listener;
 
 import javafx.util.Pair;
 import jdz.bukkitUtils.commands.Command;
+import jdz.bukkitUtils.commands.annotations.CommandAsync;
 import jdz.bukkitUtils.commands.annotations.CommandLabel;
 import jdz.bukkitUtils.commands.annotations.CommandRequiredArgs;
 import jdz.bukkitUtils.commands.annotations.CommandUsage;
 import jdz.gcBoosters.GCBoosters;
+import jdz.gcBoosters.data.BoosterDatabase;
 import jdz.gcBoosters.data.QueuedBooster;
 import jdz.gcBoosters.event.BoosterEndEvent;
 import jdz.gcBoosters.event.BoosterStartEvent;
+import lombok.Getter;
 
 @CommandLabel("tip")
 @CommandRequiredArgs(2)
-@CommandUsage("/tip <player> <boosterID>")
+@CommandUsage("tip <player> <boosterID>")
+@CommandAsync
 public class BoosterTipCommand extends Command implements Listener {
-	static Map<QueuedBooster, Set<CommandSender>> activeBoosters;
+	@Getter private static final BoosterTipCommand instance = new BoosterTipCommand();
+	
+	static final Map<QueuedBooster, Set<Player>> activeBoosters = new HashMap<QueuedBooster, Set<Player>>();
 
-	BoosterTipCommand() {
-		if (activeBoosters == null) {
-			activeBoosters = new HashMap<QueuedBooster, Set<CommandSender>>();
-			Bukkit.getPluginManager().registerEvents(this, GCBoosters.instance);
-		}
+	private BoosterTipCommand() {
+		Bukkit.getPluginManager().registerEvents(this, GCBoosters.instance);
+		register(GCBoosters.instance);
 	}
 
 	@Override
@@ -56,10 +60,11 @@ public class BoosterTipCommand extends Command implements Listener {
 		if (!b.getBooster().isOfflineTipping() && !b.getPlayer().isOnline())
 			return new Pair<Boolean, String>(false, ChatColor.RED+"You cannot tip while "+b.getPlayer().getName()+" is offline");
 
-		if (activeBoosters.get(b).contains(tipper))
+		if (activeBoosters.get(b).contains(tipper) || BoosterDatabase.getInstance().hasTipped(b, tipper))
 			return new Pair<Boolean, String>(false, ChatColor.RED+"You have already tipped this player");
 
 		activeBoosters.get(b).add(tipper);
+		BoosterDatabase.getInstance().addTipper(b, tipper);
 
 		for (String command : b.getBooster().getTipReward())
 			Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command.replaceAll("%player%", tipper.getName()));
@@ -85,11 +90,11 @@ public class BoosterTipCommand extends Command implements Listener {
 
 	@EventHandler
 	public void onBoosterStart(BoosterStartEvent event) {
-		activeBoosters.put(new QueuedBooster(event.getBooster(), event.getPlayer()), new HashSet<CommandSender>());
+		activeBoosters.put(event.getQueuedBooster(), new HashSet<Player>());
 	}
 
 	@EventHandler
-	public void onBoosterStart(BoosterEndEvent event) {
-		activeBoosters.remove(new QueuedBooster(event.getBooster(), event.getPlayer()));
+	public void onBoosterEnd(BoosterEndEvent event) {
+		activeBoosters.remove(event.getQueuedBooster());
 	}
 }

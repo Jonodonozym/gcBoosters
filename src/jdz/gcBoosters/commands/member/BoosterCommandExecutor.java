@@ -16,16 +16,17 @@ import jdz.bukkitUtils.commands.annotations.CommandExecutorPlayerOnly;
 public class BoosterCommandExecutor extends CommandExecutor{
 
 	private final List<SubCommand> subCommands = Arrays.asList(
-			new BoosterActiveCommand(),
-			new BoosterCancelCommand(),
+			new BoosterStartCommand(),
+			new BoosterStopCommand(),
 			new BoosterListCommand(),
-			new BoosterQueueCommand(),
-			new BoosterTipCommand()
+			new BoosterQueueCommand()
 			);
 	
 	public BoosterCommandExecutor(JavaPlugin plugin) {
 		super(plugin, "booster", true);
 		setDefaultCommand(new BoosterDefaultCommand());
+		getHelpCommand().addExtraCommand(BoosterTipCommand.getInstance());
+		getHelpCommand().addExtraCommand(BoosterTipAllCommand.getInstance());
 	}
 
 	@Override

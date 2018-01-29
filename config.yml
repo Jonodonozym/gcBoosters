@@ -1,4 +1,4 @@
-server: default # servers that share the same value for this, share the booster data (e.g. Minigames)
+serverGroup: default # servers that share the same value for this, share the booster data (e.g. Minigames)
 
 settings:
   returnCommand: 'cc open menu' # This is the command for the arrow in the gui menu
@@ -9,17 +9,19 @@ settings:
     - '&7u pleb'
     
   broadcast: true
-  broadcastMessages:
+  broadcastStartMessages:
     - '%player% has activated a %booster% booster' # for %duration%, but might be in the name anyway
   clickableTip: true  
   clickableTipMessage: 'Click &ehere &0to tip %player%'
-
+  broadcastEndMessages:
+    - "%player%'s %booster% booster has ended"
+    
 boosters:
-  mcmmo_x2:
+  mcmmo_x2: ## This is the booster id
     name: 'mcMMO X2 Booster (3 Hours)'
-    type: 'mcmmo' # Boosters that share a queue
-    duration: 180 # Duration in minutes
-    tipping: false # Disable tipping for this booster
+    queue: 'mcmmo'
+    duration: 180 # minutes
+    tipping: false
     offlineTipping: false # Only allow tipping if a player is online
     icon: DIAMOND_SWORD
     iconDamage: 0 # can remove this line if not used
@@ -38,5 +40,5 @@ boosters:
       - '&0Thank you for tipping &e%tippedPlayer%&0, you have recieved &e$100' # also %boosterName%, to use when running multiple boosters concurrently
     tippedReward:
       - 'eco give %player% 200'
-    tipMessages:
+    tippedMessages:
       - '&e%tippingPlayer%&0 tipped you for &e$200'

@@ -16,12 +16,13 @@ import jdz.gcBoosters.data.Booster;
 import jdz.gcBoosters.data.BoosterDatabase;
 import net.md_5.bungee.api.ChatColor;
 
+@CommandLabel("give")
 @CommandLabel("add")
 @CommandRequiredArgs(2)
-@CommandUsage("/abooster add <boosterID> <player>")
+@CommandUsage("give <boosterID> <player>")
 @CommandShortDescription("Gives a player the specified booster")
 @CommandPermission("booster.admin")
-class ABoosterAddCommand  extends SubCommand {
+class ABoosterGiveCommand  extends SubCommand {
 
 	@Override
 	public void execute(CommandSender sender, Set<String> flags, String... args) {
@@ -29,7 +30,7 @@ class ABoosterAddCommand  extends SubCommand {
 	}
 	
 	@SuppressWarnings("unused")
-	private void addBooster(CommandSender sender, String boosterID, OfflinePlayer target) {
+	public void addBooster(CommandSender sender, String boosterID, OfflinePlayer target) {
 		Booster booster = Booster.get(boosterID);
 		if (booster == null) {
 			sender.sendMessage(ChatColor.RED+"No booster found called '"+boosterID+"'");

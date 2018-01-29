@@ -11,13 +11,13 @@ import jdz.gcBoosters.GCBoosters;
 public class ABoosterCommandExecutor extends CommandExecutor {
 
 	private final List<SubCommand> subCommands = Arrays.asList(
-			new ABoosterAddCommand(),
-			new ABoosterCancelCommand(),
-			new ABoosterHardstopCommand(),
 			new ABoosterListCommand(),
-			new ABoosterOpenCommand(),
+			new ABoosterGiveCommand(),
 			new ABoosterRemoveCommand(),
-			new ABoosterSoftstopCommand()
+			new ABoosterCancelCommand(),
+			new ABoosterSoftstopCommand(),
+			new ABoosterHardstopCommand(),
+			new ABoosterOpenCommand()
 			);
 	
 	public ABoosterCommandExecutor(GCBoosters plugin) {

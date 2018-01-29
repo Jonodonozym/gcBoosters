@@ -1,6 +1,18 @@
-main: jdz.bukkitUtils.JonosBukkitUtils
+main: jdz.gcBoosters.GCBoosters
 name: gcBoosters
 version: 1.0
 author: Jonodonozym
 description: Platform for setting up, distributing, queuing and running boosters from other plugins.
 softdepend: [JBU, PlaceholderAPI]
+
+
+commands:
+  booster:
+    description: commands for players
+    aliases: [boosters]
+  abooster:
+    description: commands for admins
+  tip: 
+    description: tips a specified player
+  tipAll:
+    description: tips all possible boosters
