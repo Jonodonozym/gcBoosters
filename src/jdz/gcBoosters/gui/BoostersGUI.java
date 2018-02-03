@@ -27,7 +27,7 @@ public class BoostersGUI extends GuiMenu {
 		super(GCBoosters.instance);
 		this.player = player;
 
-		inv = Bukkit.createInventory(player, 36);
+		inv = Bukkit.createInventory(player, 36, ChatColor.AQUA+"My Boosters");
 		refreshStacks();
 	}
 
@@ -37,7 +37,10 @@ public class BoostersGUI extends GuiMenu {
 		ClickableStackCommands returnArrow = new ClickableStackCommands(Material.ARROW,
 				ChatColor.AQUA + (BoosterConfig.returnCommand.equals("") ? "Exit" : "Return"), false,
 				Arrays.asList(BoosterConfig.returnCommand));
-		returnArrow.closeOnClick();
+		
+		if (BoosterConfig.returnCommand.equals(""))
+			returnArrow.closeOnClick();
+		
 		setItem(returnArrow, 31, inv);
 
 		Bukkit.getScheduler().runTaskAsynchronously(GCBoosters.instance, () -> {
