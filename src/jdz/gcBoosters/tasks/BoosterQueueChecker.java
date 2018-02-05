@@ -44,7 +44,7 @@ public class BoosterQueueChecker {
 					
 					else if (lastBooster.getStartTime() != 0 && lastBooster.getStartTime() + lastBooster.getBooster().getDuration()*60*1000 < System.currentTimeMillis()){
 						BoosterDatabase.getInstance().dequeue(lastBooster.getPlayer(), lastBooster.getBooster());
-						lastBooster.getBooster().executeEndCommands();
+						lastBooster.getBooster().executeEndCommands(lastBooster.getPlayer());
 					}
 					
 					nextBoosters.put(queue, BoosterDatabase.getInstance().getNext(queue));
@@ -57,7 +57,7 @@ public class BoosterQueueChecker {
 					if (!BoosterDatabase.getInstance().isQueueEmpty(queue)) {
 						BoosterDatabase.getInstance().activateQueued(queue);
 						QueuedBooster booster = BoosterDatabase.getInstance().peek(queue);
-							booster.getBooster().executeStartCommands();
+							booster.getBooster().executeStartCommands(booster.getPlayer());
 					}
 				}
 		}, 0, 200);

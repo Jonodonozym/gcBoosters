@@ -11,6 +11,7 @@ import java.util.Set;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -56,16 +57,20 @@ public class Booster {
 	private final List<String> commandsOnStart;
 	private final List<String> commandsOnEnd;
 	
-	public void executeStartCommands() {
+	public void executeStartCommands(OfflinePlayer player) {
 		for (String command: commandsOnStart)
 			if (!command.equals(""))
-				Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
+				Bukkit.dispatchCommand(Bukkit.getConsoleSender(), withPlaceholders(command, player));
 	}
 	
-	public void executeEndCommands() {
+	public void executeEndCommands(OfflinePlayer player) {
 		for (String command: commandsOnEnd)
 			if (!command.equals(""))
-				Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
+				Bukkit.dispatchCommand(Bukkit.getConsoleSender(), withPlaceholders(command, player));
+	}
+	
+	private String withPlaceholders(String command, OfflinePlayer player) {
+		return command.replaceAll("%player%", player.getName());
 	}
 	
 	public Booster(FileConfiguration configFile, String ID) {
