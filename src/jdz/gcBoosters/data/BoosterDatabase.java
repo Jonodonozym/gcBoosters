@@ -306,8 +306,8 @@ public class BoosterDatabase extends Database implements Listener{
 		return api.getRows(query).isEmpty();
 	}
 
-	public void activateQueued(String queue) {
-		String update = "UPDATE " + queueTable + " SET startTime = " + System.currentTimeMillis()
+	public void activateQueued(String queue, long time) {
+		String update = "UPDATE " + queueTable + " SET startTime = " + time
 				+ " WHERE queueType = '" + queue + "' AND queuePos = 0;";
 		api.executeUpdateAsync(update);
 	}

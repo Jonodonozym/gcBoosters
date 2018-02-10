@@ -28,16 +28,12 @@ public class BoosterQueueChecker {
 					QueuedBooster lastBooster = activeBoosters.get(queue);
 					
 					if (lastBooster == null) {
-						booster.setStartTime(System.currentTimeMillis());
 						new BoosterStartEvent(booster).call();
 						activeBoosters.put(queue, booster);
-						continue;
 					}
 					
-					if (!booster.equals(lastBooster)) {
+					else if (!booster.equals(lastBooster)) {
 						activeBoosters.put(queue, booster);
-						if (booster.getBooster().equals(lastBooster.getBooster()) && booster.getPlayer().equals(lastBooster.getPlayer()))
-							continue;
 						new BoosterEndEvent(lastBooster).call();
 						new BoosterStartEvent(booster).call();
 					} 
@@ -55,9 +51,13 @@ public class BoosterQueueChecker {
 						activeBoosters.remove(queue);
 					}
 					if (!BoosterDatabase.getInstance().isQueueEmpty(queue)) {
-						BoosterDatabase.getInstance().activateQueued(queue);
+						Long time = System.currentTimeMillis();
+						BoosterDatabase.getInstance().activateQueued(queue, time);
 						QueuedBooster booster = BoosterDatabase.getInstance().peek(queue);
-							booster.getBooster().executeStartCommands(booster.getPlayer());
+						booster.setStartTime(time);
+						booster.getBooster().executeStartCommands(booster.getPlayer());
+						activeBoosters.put(queue, booster);
+						new BoosterStartEvent(booster).call();
 					}
 				}
 		}, 0, 200);
