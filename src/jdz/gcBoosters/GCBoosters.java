@@ -37,9 +37,9 @@ public class GCBoosters extends JavaPlugin{
 		
 		BoosterQueueChecker.getInstance();
 		
-		for (Player p: Bukkit.getOnlinePlayers())
 		for (RegisteredListener l: HandlerList.getRegisteredListeners(this))
 			try {
+				for (Player p: Bukkit.getOnlinePlayers())
 				l.callEvent(new PlayerJoinEvent(p, ""));
 			} catch (EventException e) {
 				new FileLogger(this).createErrorLog(e);

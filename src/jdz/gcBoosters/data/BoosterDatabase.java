@@ -17,14 +17,15 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 
 import jdz.bukkitUtils.misc.StringUtils;
-import jdz.bukkitUtils.sql.Database;
 import jdz.bukkitUtils.sql.SqlColumn;
 import jdz.bukkitUtils.sql.SqlColumnType;
+import jdz.bukkitUtils.sql.SqlDatabase;
+import jdz.bukkitUtils.sql.SqlRow;
 import jdz.gcBoosters.BoosterConfig;
 import jdz.gcBoosters.GCBoosters;
 import lombok.Getter;
 
-public class BoosterDatabase extends Database implements Listener{
+public class BoosterDatabase extends SqlDatabase implements Listener {
 	@Getter private static BoosterDatabase instance = new BoosterDatabase(GCBoosters.instance);
 
 	private final String ownedTable = "gcBoosters_" + BoosterConfig.serverGroup + "_owned";
@@ -38,7 +39,8 @@ public class BoosterDatabase extends Database implements Listener{
 
 	private final String settingsTable = "gcBoosters_Settings";
 	private final SqlColumn[] settingsTableColumns = new SqlColumn[] {
-			new SqlColumn("serverGroup", SqlColumnType.STRING_128), new SqlColumn("isStopped", SqlColumnType.BOOLEAN), new SqlColumn("isHardStopped", SqlColumnType.BOOLEAN) };
+			new SqlColumn("serverGroup", SqlColumnType.STRING_128), new SqlColumn("isStopped", SqlColumnType.BOOLEAN),
+			new SqlColumn("isHardStopped", SqlColumnType.BOOLEAN) };
 
 	private final String getAllBoostersQuery;
 
@@ -49,18 +51,17 @@ public class BoosterDatabase extends Database implements Listener{
 	 */
 	public BoosterDatabase(GCBoosters plugin) {
 		super(plugin);
-		api.runOnConnect(() -> {
-			api.addTable(ownedTable, ownedTableColumns);
-			api.addTable(queueTable, queueTableColumns);
-			api.addTable(settingsTable, settingsTableColumns);
-			boolean missingServer = api
-					.getRows("SELECT * FROM " + settingsTable + " WHERE serverGroup = '" + BoosterConfig.serverGroup + "';")
-					.isEmpty();
+		runOnConnect(() -> {
+			addTable(ownedTable, ownedTableColumns);
+			addTable(queueTable, queueTableColumns);
+			addTable(settingsTable, settingsTableColumns);
+			boolean missingServer = query(
+					"SELECT * FROM " + settingsTable + " WHERE serverGroup = '" + BoosterConfig.serverGroup + "';")
+							.isEmpty();
 			if (missingServer)
-				api.executeUpdate(
-						"INSERT INTO " + settingsTable + " (serverGroup) VALUES ('" + BoosterConfig.serverGroup + "');");
+				update("INSERT INTO " + settingsTable + " (serverGroup) VALUES ('" + BoosterConfig.serverGroup + "');");
 			for (Booster b : Booster.getBoosters())
-				api.addColumn(ownedTable, new SqlColumn(b.getID(), SqlColumnType.INT_1_BYTE));
+				addColumn(ownedTable, new SqlColumn(b.getID(), SqlColumnType.INT_1_BYTE));
 		});
 
 		String query = "SELECT ";
@@ -69,96 +70,101 @@ public class BoosterDatabase extends Database implements Listener{
 		query = query.substring(0, query.length() - 1);
 		query += " FROM " + ownedTable + " WHERE player = '%player%';";
 		getAllBoostersQuery = query;
-		
+
 		Bukkit.getPluginManager().registerEvents(this, GCBoosters.instance);
 	}
 
 	@EventHandler
 	public void loginEvent(PlayerJoinEvent event) {
 		if (!hasPlayer(event.getPlayer()))
-			api.executeUpdateAsync("INSERT INTO " + ownedTable + " (player) VALUES('" + event.getPlayer().getName() + "');");
+			updateAsync("INSERT INTO " + ownedTable + " (player) VALUES('" + event.getPlayer().getName() + "');");
 	}
 
 	public boolean hasPlayer(OfflinePlayer player) {
-		if (!api.isConnected())
+		if (!isConnected())
 			return true;
-		List<String[]> rows = api
-				.getRows("SELECT COUNT(*) FROM " + ownedTable + " WHERE player = '" + player.getName() + "';");
-		return !rows.get(0)[0].equals("0");
+		List<SqlRow> rows = query("SELECT COUNT(*) FROM " + ownedTable + " WHERE player = '" + player.getName() + "';");
+		return !rows.get(0).get(0).equals("0");
 	}
-	
+
 	public void softStop() {
-		api.executeUpdateAsync("UPDATE " + settingsTable + " SET isStopped = TRUE WHERE serverGroup = '"+BoosterConfig.serverGroup+"';");
-	
-		String query = "SELECT player, boosterID FROM "+queueTable+" WHERE queuePos != 0;";
-		List<String[]> result = api.getRows(query);
-		for(String[] row: result) {
-			@SuppressWarnings("deprecation")
-			OfflinePlayer player = Bukkit.getOfflinePlayer(row[0]);
-			Booster booster = Booster.get(row[1]);
+		updateAsync("UPDATE " + settingsTable + " SET isStopped = TRUE WHERE serverGroup = '"
+				+ BoosterConfig.serverGroup + "';");
+
+		String query = "SELECT player, boosterID FROM " + queueTable + " WHERE queuePos != 0;";
+		List<SqlRow> result = query(query);
+		for (SqlRow row : result) {
+			@SuppressWarnings("deprecation") OfflinePlayer player = Bukkit.getOfflinePlayer(row.get(0));
+			Booster booster = Booster.get(row.get(1));
 			if (booster != null)
 				addBooster(player, booster);
 		}
-		
-		api.executeUpdateAsync("DELETE FROM "+queueTable+" WHERE queuePos != 0;");
+
+		updateAsync("DELETE FROM " + queueTable + " WHERE queuePos != 0;");
 	}
 
 	public void hardStop() {
-		api.executeUpdateAsync("UPDATE " + settingsTable + " SET isStopped = TRUE WHERE serverGroup = '"+BoosterConfig.serverGroup+"';");
-		api.executeUpdateAsync("UPDATE " + settingsTable + " SET isHardStopped = TRUE WHERE serverGroup = '"+BoosterConfig.serverGroup+"';");
-		
-		String query = "SELECT player, boosterID FROM "+queueTable+";";
-		List<String[]> result = api.getRows(query);
-		for(String[] row: result) {
-			@SuppressWarnings("deprecation")
-			OfflinePlayer player = Bukkit.getOfflinePlayer(row[0]);
-			Booster booster = Booster.get(row[1]);
+		updateAsync("UPDATE " + settingsTable + " SET isStopped = TRUE WHERE serverGroup = '"
+				+ BoosterConfig.serverGroup + "';");
+		updateAsync("UPDATE " + settingsTable + " SET isHardStopped = TRUE WHERE serverGroup = '"
+				+ BoosterConfig.serverGroup + "';");
+
+		String query = "SELECT player, boosterID FROM " + queueTable + ";";
+		List<SqlRow> result = query(query);
+		for (SqlRow row : result) {
+			@SuppressWarnings("deprecation") OfflinePlayer player = Bukkit.getOfflinePlayer(row.get(0));
+			Booster booster = Booster.get(row.get(1));
 			if (booster != null)
 				addBooster(player, booster);
 		}
-		
-		api.executeUpdateAsync("TRUNCATE TABLE "+queueTable+";");
+
+		updateAsync("TRUNCATE TABLE " + queueTable + ";");
 	}
 
 	public void open() {
-		api.executeUpdateAsync("UPDATE " + settingsTable + " SET isHardStopped = FALSE WHERE serverGroup = '"+BoosterConfig.serverGroup+"';");
-		api.executeUpdateAsync("UPDATE " + settingsTable + " SET isStopped = FALSE WHERE serverGroup = '"+BoosterConfig.serverGroup+"';");
+		updateAsync("UPDATE " + settingsTable + " SET isHardStopped = FALSE WHERE serverGroup = '"
+				+ BoosterConfig.serverGroup + "';");
+		updateAsync("UPDATE " + settingsTable + " SET isStopped = FALSE WHERE serverGroup = '"
+				+ BoosterConfig.serverGroup + "';");
 	}
-	
+
 	public boolean isStopped() {
-		if (!api.isConnected())
+		if (!isConnected())
 			return true;
-		return Integer.parseInt(api.getRows("SELECT isStopped FROM "+settingsTable+" WHERE serverGroup = '"+BoosterConfig.serverGroup+"';").get(0)[0]) == 1;
+		return Integer.parseInt(query(
+				"SELECT isStopped FROM " + settingsTable + " WHERE serverGroup = '" + BoosterConfig.serverGroup + "';")
+						.get(0).get(0)) == 1;
 	}
-	
+
 	public boolean isHardStopped() {
-		if (!api.isConnected())
+		if (!isConnected())
 			return true;
-		return Integer.parseInt(api.getRows("SELECT isHardStopped FROM "+settingsTable+" WHERE serverGroup = '"+BoosterConfig.serverGroup+"';").get(0)[0]) == 1;
+		return Integer.parseInt(query("SELECT isHardStopped FROM " + settingsTable + " WHERE serverGroup = '"
+				+ BoosterConfig.serverGroup + "';").get(0).get(0)) == 1;
 	}
 
 	// owned
 	public void addBooster(OfflinePlayer player, Booster booster) {
-		api.executeUpdateAsync("UPDATE " + ownedTable + " SET " + booster.getID() + " = " + booster.getID()
-				+ "+1 WHERE player = '" + player.getName() + "';");
+		updateAsync("UPDATE " + ownedTable + " SET " + booster.getID() + " = " + booster.getID() + "+1 WHERE player = '"
+				+ player.getName() + "';");
 	}
 
 	public void removeBooster(OfflinePlayer player, Booster booster) {
 		if (hasBooster(player, booster))
-			api.executeUpdateAsync("UPDATE " + ownedTable + " SET " + booster.getID() + " = " + booster.getID()
+			updateAsync("UPDATE " + ownedTable + " SET " + booster.getID() + " = " + booster.getID()
 					+ "-1 WHERE player = '" + player.getName() + "';");
 	}
 
 	public int getAmount(OfflinePlayer player, Booster booster) {
-		if (!api.isConnected())
+		if (!isConnected())
 			return 0;
-		List<String[]> rows = api.getRows(
+		List<SqlRow> rows = query(
 				"SELECT " + booster.getID() + " FROM " + ownedTable + " WHERE player = '" + player.getName() + "';");
-		return Integer.parseInt(rows.get(0)[0]);
+		return Integer.parseInt(rows.get(0).get(0));
 	}
 
 	public boolean hasBooster(OfflinePlayer player, Booster booster) {
-		if (!api.isConnected())
+		if (!isConnected())
 			return false;
 		return getAmount(player, booster) > 0;
 	}
@@ -171,33 +177,33 @@ public class BoosterDatabase extends Database implements Listener{
 	 */
 	public Map<Booster, Integer> getAllBoosters(OfflinePlayer player) {
 		Map<Booster, Integer> boosters = new HashMap<Booster, Integer>();
-		if (!api.isConnected())
+		if (!isConnected())
 			return boosters;
-		
+
 		String query = getAllBoostersQuery.replaceAll("%player%", player.getName());
-		List<String[]> rows = api.getRows(query);
+		List<SqlRow> rows = query(query);
 
 		int i = 0;
 		for (Booster b : Booster.getBoosters())
-			boosters.put(Booster.get(b.getID()), Integer.parseInt(rows.get(0)[i++]));
+			boosters.put(Booster.get(b.getID()), Integer.parseInt(rows.get(0).get(i++)));
 
 		return boosters;
 	}
 
 	// queueing
 	public boolean isQueued(OfflinePlayer player, Booster booster) {
-		if (!api.isConnected())
+		if (!isConnected())
 			return false;
 		String query = "SELECT player FROM " + queueTable + " WHERE player = '" + player.getName()
 				+ "' AND queueType = '" + booster.getQueue() + "';";
-		return !api.getRows(query).isEmpty();
+		return !query(query).isEmpty();
 	}
 
 	public void queue(OfflinePlayer player, Booster booster) {
-		String update = "INSERT INTO " + queueTable + " (player, boosterID, queueType, queuePos, startTime, tippers) VALUES('"
-				+ player.getName() + "','" + booster.getID() + "','" + booster.getQueue() + "',"
-				+ getNextQueuePos(booster) + ",0,'');";
-		api.executeUpdateAsync(update);
+		String update = "INSERT INTO " + queueTable
+				+ " (player, boosterID, queueType, queuePos, startTime, tippers) VALUES('" + player.getName() + "','"
+				+ booster.getID() + "','" + booster.getQueue() + "'," + getNextQueuePos(booster) + ",0,'');";
+		updateAsync(update);
 	}
 
 	public boolean dequeue(OfflinePlayer player, Booster booster) {
@@ -207,85 +213,82 @@ public class BoosterDatabase extends Database implements Listener{
 		String currentPosQuery = "SELECT queuePos FROM " + queueTable + " WHERE player = '" + player.getName()
 				+ "' AND boosterID = '" + booster.getID() + "';";
 
-		int currentPos = Integer.parseInt(api.getRows(currentPosQuery).get(0)[0]);
+		int currentPos = Integer.parseInt(query(currentPosQuery).get(0).get(0));
 
 		String delete = "DELETE FROM " + queueTable + " WHERE player = '" + player.getName() + "' AND boosterID = '"
 				+ booster.getID() + "' AND queuePos = " + currentPos + ";";
 
-		api.executeUpdateAsync(delete);
+		updateAsync(delete);
 
 		String shuntUp = "UPDATE " + queueTable + " SET queuePos = queuePos-1 WHERE queuePos > " + currentPos
 				+ " AND queueType = '" + booster.getQueue() + "';";
 
-		api.executeUpdateAsync(shuntUp);
+		updateAsync(shuntUp);
 
 		return true;
 	}
 
 	private int getNextQueuePos(Booster b) {
-		if (!api.isConnected())
+		if (!isConnected())
 			return 0;
 		String query = "SELECT queuePos from " + queueTable + " WHERE queueType = '" + b.getQueue()
 				+ "' ORDER BY queuePos Desc LIMIT 1";
-		List<String[]> result = api.getRows(query);
+		List<SqlRow> result = query(query);
 		if (result.isEmpty())
 			return 0;
-		return Integer.parseInt(result.get(0)[0]) + 1;
+		return Integer.parseInt(result.get(0).get(0)) + 1;
 	}
 
 	// queues
 	public QueuedBooster peek(String queue) {
-		if (!api.isConnected())
+		if (!isConnected())
 			return null;
 		String query = "SELECT player, boosterID, startTime FROM " + queueTable + " WHERE queueType = '" + queue
 				+ "' AND queuePos = 0;";
-		List<String[]> result = api.getRows(query);
+		List<SqlRow> result = query(query);
 		if (result.isEmpty())
 			return null;
 
-		@SuppressWarnings("deprecation")
-		OfflinePlayer player = Bukkit.getOfflinePlayer(result.get(0)[0]);
-		Booster booster = Booster.get(result.get(0)[1]);
+		@SuppressWarnings("deprecation") OfflinePlayer player = Bukkit.getOfflinePlayer(result.get(0).get(0));
+		Booster booster = Booster.get(result.get(0).get(1));
 		QueuedBooster queuedBooster = new QueuedBooster(booster, player);
-		queuedBooster.setStartTime(Long.parseLong(result.get(0)[2]));
+		queuedBooster.setStartTime(Long.parseLong(result.get(0).get(2)));
 
 		return queuedBooster;
 	}
-	
+
 	// queues
 	public QueuedBooster getNext(String queue) {
-		if (!api.isConnected())
+		if (!isConnected())
 			return null;
 		String query = "SELECT player, boosterID, startTime FROM " + queueTable + " WHERE queueType = '" + queue
 				+ "' AND queuePos = 1;";
-		List<String[]> result = api.getRows(query);
+		List<SqlRow> result = query(query);
 		if (result.isEmpty())
 			return null;
 
-		@SuppressWarnings("deprecation")
-		OfflinePlayer player = Bukkit.getOfflinePlayer(result.get(0)[0]);
-		Booster booster = Booster.get(result.get(0)[1]);
+		@SuppressWarnings("deprecation") OfflinePlayer player = Bukkit.getOfflinePlayer(result.get(0).get(0));
+		Booster booster = Booster.get(result.get(0).get(1));
 		QueuedBooster queuedBooster = new QueuedBooster(booster, player);
-		queuedBooster.setStartTime(Long.parseLong(result.get(0)[2]));
+		queuedBooster.setStartTime(Long.parseLong(result.get(0).get(2)));
 
 		return queuedBooster;
 	}
 
 	public List<QueuedBooster> getQueue(String queue) {
 		List<QueuedBooster> boosters = new ArrayList<QueuedBooster>();
-		if (!api.isConnected())
+		if (!isConnected())
 			return boosters;
 		String query = "SELECT player, boosterID, startTime FROM " + queueTable + " WHERE queueType = '" + queue
 				+ "' ORDER BY queuePos ASC;";
 
-		List<String[]> result = api.getRows(query);
+		List<SqlRow> result = query(query);
 
-		for (String[] row : result) {
-			@SuppressWarnings("deprecation")
-			OfflinePlayer player = Bukkit.getOfflinePlayer(row[0]);
-			Booster booster = Booster.get(row[1]);
+		for (SqlRow row : result) {
+			@SuppressWarnings("deprecation") OfflinePlayer player = Bukkit.getOfflinePlayer(row.get(0));
+			Booster booster = Booster.get(row.get(1));
 			QueuedBooster queuedBooster = new QueuedBooster(booster, player);
-			queuedBooster.setStartTime(Long.parseLong(row[2]));
+			queuedBooster.setStartTime(Long.parseLong(row.get(2)));
 			boosters.add(queuedBooster);
 		}
 
@@ -293,41 +296,41 @@ public class BoosterDatabase extends Database implements Listener{
 	}
 
 	public boolean isRunning(String queue) {
-		if (!api.isConnected())
+		if (!isConnected())
 			return false;
 		String query = "SELECT player FROM " + queueTable + " WHERE queueType = '" + queue + "' && startTime != 0;";
-		return !api.getRows(query).isEmpty();
+		return !query(query).isEmpty();
 	}
 
 	public boolean isQueueEmpty(String queue) {
-		if (!api.isConnected())
+		if (!isConnected())
 			return true;
 		String query = "SELECT player FROM " + queueTable + " WHERE queueType = '" + queue + "';";
-		return api.getRows(query).isEmpty();
+		return query(query).isEmpty();
 	}
 
 	public void activateQueued(String queue, long time) {
-		String update = "UPDATE " + queueTable + " SET startTime = " + time
-				+ " WHERE queueType = '" + queue + "' AND queuePos = 0;";
-		api.executeUpdateAsync(update);
+		String update = "UPDATE " + queueTable + " SET startTime = " + time + " WHERE queueType = '" + queue
+				+ "' AND queuePos = 0;";
+		updateAsync(update);
 	}
 
 	// Tipping
 
 	public boolean hasTipped(QueuedBooster b, Player player) {
-		if (!api.isConnected())
+		if (!isConnected())
 			return true;
 		return getTippers(b).contains(player.getName());
 	}
 
 	private Set<String> getTippers(QueuedBooster b) {
-		if (!api.isConnected())
+		if (!isConnected())
 			return new HashSet<String>();
 		String query = "SELECT tippers FROM " + queueTable + " WHERE player ='" + b.getPlayer().getName()
 				+ "' AND boosterID = '" + b.getBooster().getID() + "';";
-		List<String[]> result = api.getRows(query);
+		List<SqlRow> result = query(query);
 
-		return new HashSet<String>(Arrays.asList(result.get(0)[0].split(":")));
+		return new HashSet<String>(Arrays.asList(result.get(0).get(0).split(":")));
 	}
 
 	public void addTipper(QueuedBooster b, Player player) {
@@ -336,6 +339,6 @@ public class BoosterDatabase extends Database implements Listener{
 
 		String update = "UPDATE " + queueTable + " SET tippers = '" + StringUtils.collectionToString(tippers, ":")
 				+ "' WHERE player ='" + b.getPlayer().getName() + "' AND boosterID = '" + b.getBooster().getID() + "';";
-		api.executeUpdateAsync(update);
+		updateAsync(update);
 	}
 }

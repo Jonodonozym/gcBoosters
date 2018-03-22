@@ -13,12 +13,12 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
-import javafx.util.Pair;
 import jdz.bukkitUtils.commands.Command;
 import jdz.bukkitUtils.commands.annotations.CommandAsync;
 import jdz.bukkitUtils.commands.annotations.CommandLabel;
 import jdz.bukkitUtils.commands.annotations.CommandRequiredArgs;
 import jdz.bukkitUtils.commands.annotations.CommandUsage;
+import jdz.bukkitUtils.misc.Pair;
 import jdz.gcBoosters.GCBoosters;
 import jdz.gcBoosters.data.BoosterDatabase;
 import jdz.gcBoosters.data.QueuedBooster;
