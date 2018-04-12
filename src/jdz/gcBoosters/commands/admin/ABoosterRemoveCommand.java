@@ -30,7 +30,6 @@ class ABoosterRemoveCommand extends SubCommand {
 		tryParse("removeBooster", true, sender, flags, args);
 	}
 
-	@SuppressWarnings("unused")
 	public void removeBooster(CommandSender sender, String boosterID, OfflinePlayer target) {
 		Booster booster = Booster.get(boosterID);
 		if (booster == null) {

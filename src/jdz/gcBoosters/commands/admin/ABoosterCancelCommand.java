@@ -30,7 +30,6 @@ class ABoosterCancelCommand  extends SubCommand {
 		tryParse("cancel", true, sender, flags, args);
 	}
 	
-	@SuppressWarnings("unused")
 	public void cancel(CommandSender sender, String boosterID, OfflinePlayer player) {
 		Booster booster = Booster.get(boosterID);
 		if (booster == null) {

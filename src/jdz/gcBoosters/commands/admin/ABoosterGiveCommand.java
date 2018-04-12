@@ -29,7 +29,6 @@ class ABoosterGiveCommand  extends SubCommand {
 		tryParse("addBooster", true, sender, flags, args);
 	}
 	
-	@SuppressWarnings("unused")
 	public void addBooster(CommandSender sender, String boosterID, OfflinePlayer target) {
 		Booster booster = Booster.get(boosterID);
 		if (booster == null) {

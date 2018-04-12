@@ -36,7 +36,7 @@ public class BoosterListCommand  extends SubCommand{
 				zeroRemovedBoosters.put(b, boosters.get(b));
 		
 		if (zeroRemovedBoosters.isEmpty()) {
-			if (sender.equals(target))
+			if (target.isOnline() && sender.equals(target.getPlayer()))
 				sender.sendMessage(ChatColor.RED+"You don't have any boosters");
 			else
 				sender.sendMessage(ChatColor.RED+target.getName()+" doesn't have any boosters");
@@ -44,7 +44,7 @@ public class BoosterListCommand  extends SubCommand{
 		}
 		
 		String [] lines = new String[zeroRemovedBoosters.size()+2];
-		if (sender.equals(target))
+		if (target.isOnline() && sender.equals(target.getPlayer()))
 			lines[0] = ChatColor.GRAY+"========[ "+ChatColor.GOLD+"My boosters"+ChatColor.GRAY+" ]========";
 		else
 			lines[0] = ChatColor.GRAY+"========[ "+ChatColor.GOLD+target.getName()+"'s boosters"+ChatColor.GRAY+" ]========";

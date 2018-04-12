@@ -29,7 +29,6 @@ class ABoosterListCommand extends SubCommand {
 		tryParse("list", true, sender, flags, args);
 	}
 
-	@SuppressWarnings("unused")
 	public void list(CommandSender sender, OfflinePlayer target) {
 		listCommand.list(sender, target);
 	}

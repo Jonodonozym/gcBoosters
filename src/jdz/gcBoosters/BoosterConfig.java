@@ -46,7 +46,7 @@ public class BoosterConfig {
 		noBoostersName = ColorUtils.translate(config.getString("settings.noBoostersName"));
 		
 		noBoostersLore = Collections
-				.unmodifiableList(ColorUtils.translate(config.getStringList("settings.noBoosterLore")));
+				.unmodifiableList(ColorUtils.translate(config.getStringList("settings.noBoostersLore")));
 
 		broadcast = config.getBoolean("settings.broadcast");
 		broadcastStartMessages = ColorUtils.translate(config.getStringList("settings.broadcastStartMessages").toArray(new String[1]));
