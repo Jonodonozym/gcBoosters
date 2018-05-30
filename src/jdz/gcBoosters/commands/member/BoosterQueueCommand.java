@@ -3,8 +3,6 @@ package jdz.gcBoosters.commands.member;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
-
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
@@ -23,7 +21,7 @@ import jdz.gcBoosters.data.QueuedBooster;
 @CommandShortDescription("lists the boosters in the queues")
 class BoosterQueueCommand extends SubCommand {
 	@Override
-	public void execute(CommandSender sender, Set<String> flags, String... args) {
+	public void execute(CommandSender sender, String... args) {
 		List<String> lines = new ArrayList<String>();
 		lines.add(ChatColor.GRAY+"============[ "+ChatColor.AQUA + "Queued Boosters "+ChatColor.GRAY + "]============");
 		for (String queue: Booster.getQueues()) {

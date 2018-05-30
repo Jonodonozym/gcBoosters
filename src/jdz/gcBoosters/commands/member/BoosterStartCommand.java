@@ -1,8 +1,6 @@
 
 package jdz.gcBoosters.commands.member;
 
-import java.util.Set;
-
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -27,7 +25,7 @@ import net.md_5.bungee.api.ChatColor;
 public class BoosterStartCommand extends SubCommand {
 
 	@Override
-	public void execute(CommandSender sender, Set<String> flags, String... args) {
+	public void execute(CommandSender sender, String... args) {
 		Booster booster = Booster.get(args[0]);
 		if (booster == null) {
 			sender.sendMessage(ChatColor.RED+"No boosters found called '"+args[0]+"'. Do /booster list to see your boosters");

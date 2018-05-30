@@ -6,8 +6,10 @@ import java.util.List;
 
 import jdz.bukkitUtils.commands.CommandExecutor;
 import jdz.bukkitUtils.commands.SubCommand;
+import jdz.bukkitUtils.commands.annotations.CommandExecutorPermission;
 import jdz.gcBoosters.GCBoosters;
 
+@CommandExecutorPermission("booster.admin")
 public class ABoosterCommandExecutor extends CommandExecutor {
 
 	private final List<SubCommand> subCommands = Arrays.asList(
@@ -22,7 +24,6 @@ public class ABoosterCommandExecutor extends CommandExecutor {
 	
 	public ABoosterCommandExecutor(GCBoosters plugin) {
 		super(plugin, "abooster", false);
-		getHelpCommand().setPermissions("booster.admin");
 	}
 
 	@Override

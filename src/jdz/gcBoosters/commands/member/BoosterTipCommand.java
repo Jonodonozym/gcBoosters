@@ -41,7 +41,7 @@ public class BoosterTipCommand extends Command implements Listener {
 	}
 
 	@Override
-	public void execute(CommandSender sender, Set<String> flags, String... args) {
+	public void execute(CommandSender sender, String... args) {
 		for (QueuedBooster b: activeBoosters.keySet()) {
 			if (b.getPlayer().getName().equalsIgnoreCase(args[0]) && b.getBooster().getID().equalsIgnoreCase(args[1])) {
 				Pair<Boolean, String> result = tip((Player)sender, b);

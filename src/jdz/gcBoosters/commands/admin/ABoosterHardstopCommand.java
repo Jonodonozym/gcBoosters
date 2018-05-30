@@ -1,8 +1,6 @@
 
 package jdz.gcBoosters.commands.admin;
 
-import java.util.Set;
-
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
@@ -20,7 +18,7 @@ import jdz.gcBoosters.data.BoosterDatabase;
 class ABoosterHardstopCommand  extends SubCommand {
 
 	@Override
-	public void execute(CommandSender sender, Set<String> flags, String... args) {
+	public void execute(CommandSender sender, String... args) {
 		if (BoosterDatabase.getInstance().isHardStopped())
 			sender.sendMessage(ChatColor.RED+"Booster queue is already hard-stopped");
 		else {

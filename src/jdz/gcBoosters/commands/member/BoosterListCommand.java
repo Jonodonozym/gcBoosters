@@ -3,8 +3,6 @@ package jdz.gcBoosters.commands.member;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
-
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 
@@ -23,7 +21,7 @@ import net.md_5.bungee.api.ChatColor;
 public class BoosterListCommand  extends SubCommand{
 
 	@Override
-	public void execute(CommandSender sender, Set<String> flags, String... args) {
+	public void execute(CommandSender sender, String... args) {
 		list(sender, (OfflinePlayer)sender);
 	}
 	

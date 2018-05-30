@@ -1,8 +1,6 @@
 
 package jdz.gcBoosters.commands.member;
 
-import java.util.Set;
-
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -24,7 +22,7 @@ public class BoosterTipAllCommand extends Command {
 	}
 
 	@Override
-	public void execute(CommandSender sender, Set<String> flags, String... args) {
+	public void execute(CommandSender sender, String... args) {
 		boolean tipped = false;
 		for (QueuedBooster b : BoosterTipCommand.activeBoosters.keySet())
 			tipped &= BoosterTipCommand.getInstance().tip((Player) sender, b).getKey();

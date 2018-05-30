@@ -3,9 +3,9 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/5"/>
-	<classpathentry kind="lib" path="D:/User/git/^^Libs/JBU.jar"/>
 	<classpathentry kind="lib" path="D:/User/git/^^Libs/lombok.jar"/>
-	<classpathentry kind="lib" path="D:/User/git/^^Libs/PlaceholderAPI-2.8.2.jar"/>
-	<classpathentry kind="lib" path="D:/User/git/^^Libs/spigot-1.12.jar"/>
+	<classpathentry kind="lib" path="D:/User/git/^^Libs/Minecraft Plugins/JBU.jar"/>
+	<classpathentry kind="lib" path="D:/User/git/^^Libs/Minecraft Plugins/PlaceholderAPI-2.8.2.jar"/>
+	<classpathentry kind="lib" path="D:/User/git/^^Libs/Minecraft Plugins/spigot-1.12.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
