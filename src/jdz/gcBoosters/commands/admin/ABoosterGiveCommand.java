@@ -21,7 +21,7 @@ import net.md_5.bungee.api.ChatColor;
 @CommandUsage("give <boosterID> <player>")
 @CommandShortDescription("Gives a player the specified booster")
 @CommandPermission("booster.admin")
-class ABoosterGiveCommand  extends SubCommand {	
+public class ABoosterGiveCommand  extends SubCommand {	
 	@CommandMethod
 	public void addBooster(CommandSender sender, String boosterID, OfflinePlayer target) {
 		Booster booster = Booster.get(boosterID);

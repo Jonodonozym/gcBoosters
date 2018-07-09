@@ -22,7 +22,7 @@ import net.md_5.bungee.api.ChatColor;
 @CommandShortDescription("Removes a specified booster from a player")
 @CommandPermission("booster.admin")
 @CommandAsync
-class ABoosterRemoveCommand extends SubCommand {
+public class ABoosterRemoveCommand extends SubCommand {
 
 	@CommandMethod
 	public void removeBooster(CommandSender sender, String boosterID, OfflinePlayer target) {

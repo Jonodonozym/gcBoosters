@@ -20,7 +20,7 @@ import jdz.gcBoosters.commands.member.BoosterListCommand;
 @CommandUsage("list [player]")
 @CommandShortDescription("Lists the boosters a player has")
 @CommandAsync
-class ABoosterListCommand extends SubCommand {
+public class ABoosterListCommand extends SubCommand {
 	private static final BoosterListCommand listCommand = new BoosterListCommand();
 	
 	@CommandMethod

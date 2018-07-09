@@ -20,7 +20,7 @@ import net.md_5.bungee.api.ChatColor;
 @CommandShortDescription("cancels a queued booster")
 @CommandUsage("stop [ID]")
 @CommandRequiredArgs(1)
-class BoosterStopCommand extends SubCommand {
+public class BoosterStopCommand extends SubCommand {
 
 	@Override
 	public void execute(CommandSender sender, String... args) {

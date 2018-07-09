@@ -15,7 +15,7 @@ import jdz.gcBoosters.data.BoosterDatabase;
 @CommandPermission("booster.admin")
 @CommandShortDescription("Opens the booster queue after a soft or hard stop")
 @CommandAsync
-class ABoosterOpenCommand  extends SubCommand {
+public class ABoosterOpenCommand  extends SubCommand {
 
 	@Override
 	public void execute(CommandSender sender, String... args) {

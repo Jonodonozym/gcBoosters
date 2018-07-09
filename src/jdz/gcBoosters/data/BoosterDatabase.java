@@ -17,10 +17,10 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 
 import jdz.bukkitUtils.misc.StringUtils;
-import jdz.bukkitUtils.sql.SqlColumn;
-import jdz.bukkitUtils.sql.SqlColumnType;
+import jdz.bukkitUtils.sql.SQLColumn;
+import jdz.bukkitUtils.sql.SQLColumnType;
 import jdz.bukkitUtils.sql.SqlDatabase;
-import jdz.bukkitUtils.sql.SqlRow;
+import jdz.bukkitUtils.sql.SQLRow;
 import jdz.gcBoosters.BoosterConfig;
 import jdz.gcBoosters.GCBoosters;
 import lombok.Getter;
@@ -29,18 +29,18 @@ public class BoosterDatabase extends SqlDatabase implements Listener {
 	@Getter private static BoosterDatabase instance = new BoosterDatabase(GCBoosters.instance);
 
 	private final String ownedTable = "gcBoosters_" + BoosterConfig.serverGroup + "_owned";
-	private final SqlColumn[] ownedTableColumns = new SqlColumn[] { new SqlColumn("player", SqlColumnType.STRING_128) };
+	private final SQLColumn[] ownedTableColumns = new SQLColumn[] { new SQLColumn("player", SQLColumnType.STRING_128) };
 
 	private final String queueTable = "gcBoosters_" + BoosterConfig.serverGroup + "_queue";
-	private final SqlColumn[] queueTableColumns = new SqlColumn[] { new SqlColumn("player", SqlColumnType.STRING_128),
-			new SqlColumn("boosterID", SqlColumnType.STRING_128), new SqlColumn("queueType", SqlColumnType.STRING_64),
-			new SqlColumn("queuePos", SqlColumnType.INT_1_BYTE), new SqlColumn("startTime", SqlColumnType.LONG),
-			new SqlColumn("tippers", SqlColumnType.STRING) };
+	private final SQLColumn[] queueTableColumns = new SQLColumn[] { new SQLColumn("player", SQLColumnType.STRING_128),
+			new SQLColumn("boosterID", SQLColumnType.STRING_128), new SQLColumn("queueType", SQLColumnType.STRING_64),
+			new SQLColumn("queuePos", SQLColumnType.INT_1_BYTE), new SQLColumn("startTime", SQLColumnType.LONG),
+			new SQLColumn("tippers", SQLColumnType.STRING) };
 
 	private final String settingsTable = "gcBoosters_Settings";
-	private final SqlColumn[] settingsTableColumns = new SqlColumn[] {
-			new SqlColumn("serverGroup", SqlColumnType.STRING_128), new SqlColumn("isStopped", SqlColumnType.BOOLEAN),
-			new SqlColumn("isHardStopped", SqlColumnType.BOOLEAN) };
+	private final SQLColumn[] settingsTableColumns = new SQLColumn[] {
+			new SQLColumn("serverGroup", SQLColumnType.STRING_128), new SQLColumn("isStopped", SQLColumnType.BOOLEAN),
+			new SQLColumn("isHardStopped", SQLColumnType.BOOLEAN) };
 
 	private final String getAllBoostersQuery;
 
@@ -61,7 +61,7 @@ public class BoosterDatabase extends SqlDatabase implements Listener {
 			if (missingServer)
 				update("INSERT INTO " + settingsTable + " (serverGroup) VALUES ('" + BoosterConfig.serverGroup + "');");
 			for (Booster b : Booster.getBoosters())
-				addColumn(ownedTable, new SqlColumn(b.getID(), SqlColumnType.INT_1_BYTE));
+				addColumn(ownedTable, new SQLColumn(b.getID(), SQLColumnType.INT_1_BYTE));
 		});
 
 		String query = "SELECT ";
@@ -83,7 +83,7 @@ public class BoosterDatabase extends SqlDatabase implements Listener {
 	public boolean hasPlayer(OfflinePlayer player) {
 		if (!isConnected())
 			return true;
-		List<SqlRow> rows = query("SELECT COUNT(*) FROM " + ownedTable + " WHERE player = '" + player.getName() + "';");
+		List<SQLRow> rows = query("SELECT COUNT(*) FROM " + ownedTable + " WHERE player = '" + player.getName() + "';");
 		return !rows.get(0).get(0).equals("0");
 	}
 
@@ -92,8 +92,8 @@ public class BoosterDatabase extends SqlDatabase implements Listener {
 				+ BoosterConfig.serverGroup + "';");
 
 		String query = "SELECT player, boosterID FROM " + queueTable + " WHERE queuePos != 0;";
-		List<SqlRow> result = query(query);
-		for (SqlRow row : result) {
+		List<SQLRow> result = query(query);
+		for (SQLRow row : result) {
 			@SuppressWarnings("deprecation") OfflinePlayer player = Bukkit.getOfflinePlayer(row.get(0));
 			Booster booster = Booster.get(row.get(1));
 			if (booster != null)
@@ -110,8 +110,8 @@ public class BoosterDatabase extends SqlDatabase implements Listener {
 				+ BoosterConfig.serverGroup + "';");
 
 		String query = "SELECT player, boosterID FROM " + queueTable + ";";
-		List<SqlRow> result = query(query);
-		for (SqlRow row : result) {
+		List<SQLRow> result = query(query);
+		for (SQLRow row : result) {
 			@SuppressWarnings("deprecation") OfflinePlayer player = Bukkit.getOfflinePlayer(row.get(0));
 			Booster booster = Booster.get(row.get(1));
 			if (booster != null)
@@ -158,7 +158,7 @@ public class BoosterDatabase extends SqlDatabase implements Listener {
 	public int getAmount(OfflinePlayer player, Booster booster) {
 		if (!isConnected())
 			return 0;
-		List<SqlRow> rows = query(
+		List<SQLRow> rows = query(
 				"SELECT " + booster.getID() + " FROM " + ownedTable + " WHERE player = '" + player.getName() + "';");
 		return Integer.parseInt(rows.get(0).get(0));
 	}
@@ -181,7 +181,7 @@ public class BoosterDatabase extends SqlDatabase implements Listener {
 			return boosters;
 
 		String query = getAllBoostersQuery.replaceAll("%player%", player.getName());
-		List<SqlRow> rows = query(query);
+		List<SQLRow> rows = query(query);
 
 		int i = 0;
 		for (Booster b : Booster.getBoosters())
@@ -233,7 +233,7 @@ public class BoosterDatabase extends SqlDatabase implements Listener {
 			return 0;
 		String query = "SELECT queuePos from " + queueTable + " WHERE queueType = '" + b.getQueue()
 				+ "' ORDER BY queuePos Desc LIMIT 1";
-		List<SqlRow> result = query(query);
+		List<SQLRow> result = query(query);
 		if (result.isEmpty())
 			return 0;
 		return Integer.parseInt(result.get(0).get(0)) + 1;
@@ -245,7 +245,7 @@ public class BoosterDatabase extends SqlDatabase implements Listener {
 			return null;
 		String query = "SELECT player, boosterID, startTime FROM " + queueTable + " WHERE queueType = '" + queue
 				+ "' AND queuePos = 0;";
-		List<SqlRow> result = query(query);
+		List<SQLRow> result = query(query);
 		if (result.isEmpty())
 			return null;
 
@@ -263,7 +263,7 @@ public class BoosterDatabase extends SqlDatabase implements Listener {
 			return null;
 		String query = "SELECT player, boosterID, startTime FROM " + queueTable + " WHERE queueType = '" + queue
 				+ "' AND queuePos = 1;";
-		List<SqlRow> result = query(query);
+		List<SQLRow> result = query(query);
 		if (result.isEmpty())
 			return null;
 
@@ -282,9 +282,9 @@ public class BoosterDatabase extends SqlDatabase implements Listener {
 		String query = "SELECT player, boosterID, startTime FROM " + queueTable + " WHERE queueType = '" + queue
 				+ "' ORDER BY queuePos ASC;";
 
-		List<SqlRow> result = query(query);
+		List<SQLRow> result = query(query);
 
-		for (SqlRow row : result) {
+		for (SQLRow row : result) {
 			@SuppressWarnings("deprecation") OfflinePlayer player = Bukkit.getOfflinePlayer(row.get(0));
 			Booster booster = Booster.get(row.get(1));
 			QueuedBooster queuedBooster = new QueuedBooster(booster, player);
@@ -328,7 +328,7 @@ public class BoosterDatabase extends SqlDatabase implements Listener {
 			return new HashSet<String>();
 		String query = "SELECT tippers FROM " + queueTable + " WHERE player ='" + b.getPlayer().getName()
 				+ "' AND boosterID = '" + b.getBooster().getID() + "';";
-		List<SqlRow> result = query(query);
+		List<SQLRow> result = query(query);
 
 		return new HashSet<String>(Arrays.asList(result.get(0).get(0).split(":")));
 	}

@@ -13,7 +13,7 @@ import jdz.gcBoosters.gui.BoostersGUI;
 @CommandLabel("DEFAULT")
 @CommandUsage(" ")
 @CommandShortDescription("Opens the boosters gui")
-class BoosterDefaultCommand  extends SubCommand{
+public class BoosterDefaultCommand  extends SubCommand{
 
 	@Override
 	public void execute(CommandSender sender, String... args) {

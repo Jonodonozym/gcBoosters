@@ -15,7 +15,7 @@ import jdz.gcBoosters.data.BoosterDatabase;
 @CommandPermission("booster.admin")
 @CommandShortDescription("Halts and redeems queued boosters, and disables further booster activation. Active boosters continue.")
 @CommandAsync
-class ABoosterSoftstopCommand  extends SubCommand {
+public class ABoosterSoftstopCommand  extends SubCommand {
 
 	@Override
 	public void execute(CommandSender sender, String... args) {

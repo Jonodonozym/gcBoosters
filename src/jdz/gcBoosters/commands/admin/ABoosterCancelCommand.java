@@ -22,7 +22,7 @@ import net.md_5.bungee.api.ChatColor;
 @CommandUsage("cancel <boosterID> <player>")
 @CommandRequiredArgs(2)
 @CommandAsync
-class ABoosterCancelCommand  extends SubCommand {
+public class ABoosterCancelCommand  extends SubCommand {
 	@CommandMethod
 	public void cancel(CommandSender sender, String boosterID, OfflinePlayer player) {
 		Booster booster = Booster.get(boosterID);

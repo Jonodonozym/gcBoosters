@@ -19,7 +19,7 @@ import jdz.gcBoosters.data.QueuedBooster;
 @CommandAsync
 @CommandLabel("queue")
 @CommandShortDescription("lists the boosters in the queues")
-class BoosterQueueCommand extends SubCommand {
+public class BoosterQueueCommand extends SubCommand {
 	@Override
 	public void execute(CommandSender sender, String... args) {
 		List<String> lines = new ArrayList<String>();
