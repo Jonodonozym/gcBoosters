@@ -22,29 +22,29 @@ import lombok.Getter;
 
 public class Booster {
 
-	private static final Map<String, Booster> boosters = new HashMap<String, Booster>();
-	@Getter private static final Set<String> queues = new HashSet<String>();
-	
+	private static final Map<String, Booster> boosters = new HashMap<>();
+	@Getter private static final Set<String> queues = new HashSet<>();
+
 	public static Booster get(String ID) {
 		return boosters.get(ID);
 	}
-	
+
 	public static Collection<Booster> getBoosters() {
 		return boosters.values();
 	}
-	
+
 	public static void clearBoosters() {
 		boosters.clear();
 		queues.clear();
 	}
-	
+
 	@Getter private final String ID;
 	@Getter private final String name;
 	@Getter private final String queue;
 	@Getter private final int duration;
 	@Getter private final boolean tipping;
 	@Getter private final boolean offlineTipping;
-	
+
 	@Getter private final ItemStack stack;
 
 	@Getter private final List<String> description;
@@ -56,70 +56,72 @@ public class Booster {
 
 	private final List<String> commandsOnStart;
 	private final List<String> commandsOnEnd;
-	
+
 	public void executeStartCommands(OfflinePlayer player) {
-		for (String command: commandsOnStart)
+		for (String command : commandsOnStart)
 			if (!command.equals(""))
 				Bukkit.dispatchCommand(Bukkit.getConsoleSender(), withPlaceholders(command, player));
 	}
-	
+
 	public void executeEndCommands(OfflinePlayer player) {
-		for (String command: commandsOnEnd)
+		for (String command : commandsOnEnd)
 			if (!command.equals(""))
 				Bukkit.dispatchCommand(Bukkit.getConsoleSender(), withPlaceholders(command, player));
 	}
-	
+
 	private String withPlaceholders(String command, OfflinePlayer player) {
 		return command.replaceAll("%player%", player.getName());
 	}
-	
+
 	public Booster(FileConfiguration configFile, String ID) {
 		this.ID = ID;
-		this.name = ColorUtils.translate(configFile.getString("boosters."+ID+".name"));
-		this.queue = configFile.getString("boosters."+ID+".queue");
-		this.duration = configFile.getInt("boosters."+ID+".duration");
-		this.tipping = configFile.getBoolean("boosters."+ID+".tipping");
-		this.offlineTipping = configFile.getBoolean("boosters."+ID+".offlineTipping");
+		name = ColorUtils.translate(configFile.getString("boosters." + ID + ".name"));
+		queue = configFile.getString("boosters." + ID + ".queue");
+		duration = configFile.getInt("boosters." + ID + ".duration");
+		tipping = configFile.getBoolean("boosters." + ID + ".tipping");
+		offlineTipping = configFile.getBoolean("boosters." + ID + ".offlineTipping");
 
-		description = Collections.unmodifiableList(ColorUtils.translate(configFile.getStringList("boosters."+ID+".description")));
-		commandsOnStart = Collections.unmodifiableList(configFile.getStringList("boosters."+ID+".commandsOnStart"));
-		commandsOnEnd = Collections.unmodifiableList(configFile.getStringList("boosters."+ID+".commandsOnEnd"));
-		tipReward = Collections.unmodifiableList(configFile.getStringList("boosters."+ID+".tipReward"));
-		tippedReward = Collections.unmodifiableList(configFile.getStringList("boosters."+ID+".tippedReward"));
-		
-		tipMessages = Collections.unmodifiableList(ColorUtils.translate(configFile.getStringList("boosters."+ID+".tipMessages")));
-		tippedMessages = Collections.unmodifiableList(ColorUtils.translate(configFile.getStringList("boosters."+ID+".tippedMessages")));
-		
+		description = Collections
+				.unmodifiableList(ColorUtils.translate(configFile.getStringList("boosters." + ID + ".description")));
+		commandsOnStart = Collections.unmodifiableList(configFile.getStringList("boosters." + ID + ".commandsOnStart"));
+		commandsOnEnd = Collections.unmodifiableList(configFile.getStringList("boosters." + ID + ".commandsOnEnd"));
+		tipReward = Collections.unmodifiableList(configFile.getStringList("boosters." + ID + ".tipReward"));
+		tippedReward = Collections.unmodifiableList(configFile.getStringList("boosters." + ID + ".tippedReward"));
+
+		tipMessages = Collections
+				.unmodifiableList(ColorUtils.translate(configFile.getStringList("boosters." + ID + ".tipMessages")));
+		tippedMessages = Collections
+				.unmodifiableList(ColorUtils.translate(configFile.getStringList("boosters." + ID + ".tippedMessages")));
+
 		stack = generateStack(configFile);
-		
+
 		boosters.put(ID, this);
-		queues.add(this.getQueue());
+		queues.add(getQueue());
 	}
-	
+
 	private final ItemStack generateStack(FileConfiguration configFile) {
 		Material mat = Material.PAPER;
-		try{
-			mat = Material.valueOf(configFile.getString("boosters."+ID+".icon"));
+		try {
+			mat = Material.valueOf(configFile.getString("boosters." + ID + ".icon"));
 		}
 		catch (Exception e) {
-			GCBoosters.instance.getLogger().warning("Booster "+ID+" has an invalid icon, defaulting to paper");
+			GCBoosters.instance.getLogger().warning("Booster " + ID + " has an invalid icon, defaulting to paper");
 		}
 		short data = 0;
 		try {
-			data = (short)configFile.getInt("boosters."+ID+".iconDamage");
+			data = (short) configFile.getInt("boosters." + ID + ".iconDamage");
 		}
-		catch (Exception e) {
-		}
-		
+		catch (Exception e) {}
+
 		ItemStack stack = new ItemStack(mat, data);
-		
+
 		ItemMeta itemMeta = stack.getItemMeta();
 		itemMeta.setDisplayName(name);
 		itemMeta.setLore(description);
-		
+
 		stack.setItemMeta(itemMeta);
-		
+
 		return stack;
 	}
-	
+
 }

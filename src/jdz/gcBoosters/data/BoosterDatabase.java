@@ -19,8 +19,8 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import jdz.bukkitUtils.misc.StringUtils;
 import jdz.bukkitUtils.sql.SQLColumn;
 import jdz.bukkitUtils.sql.SQLColumnType;
-import jdz.bukkitUtils.sql.SqlDatabase;
 import jdz.bukkitUtils.sql.SQLRow;
+import jdz.bukkitUtils.sql.SqlDatabase;
 import jdz.gcBoosters.BoosterConfig;
 import jdz.gcBoosters.GCBoosters;
 import lombok.Getter;
@@ -46,7 +46,7 @@ public class BoosterDatabase extends SqlDatabase implements Listener {
 
 	/**
 	 * Must be initialized after boosterconfig
-	 * 
+	 *
 	 * @param plugin
 	 */
 	public BoosterDatabase(GCBoosters plugin) {
@@ -94,7 +94,8 @@ public class BoosterDatabase extends SqlDatabase implements Listener {
 		String query = "SELECT player, boosterID FROM " + queueTable + " WHERE queuePos != 0;";
 		List<SQLRow> result = query(query);
 		for (SQLRow row : result) {
-			@SuppressWarnings("deprecation") OfflinePlayer player = Bukkit.getOfflinePlayer(row.get(0));
+			@SuppressWarnings("deprecation")
+			OfflinePlayer player = Bukkit.getOfflinePlayer(row.get(0));
 			Booster booster = Booster.get(row.get(1));
 			if (booster != null)
 				addBooster(player, booster);
@@ -112,7 +113,8 @@ public class BoosterDatabase extends SqlDatabase implements Listener {
 		String query = "SELECT player, boosterID FROM " + queueTable + ";";
 		List<SQLRow> result = query(query);
 		for (SQLRow row : result) {
-			@SuppressWarnings("deprecation") OfflinePlayer player = Bukkit.getOfflinePlayer(row.get(0));
+			@SuppressWarnings("deprecation")
+			OfflinePlayer player = Bukkit.getOfflinePlayer(row.get(0));
 			Booster booster = Booster.get(row.get(1));
 			if (booster != null)
 				addBooster(player, booster);
@@ -171,12 +173,12 @@ public class BoosterDatabase extends SqlDatabase implements Listener {
 
 	/**
 	 * Returns a map from booster -> number owned
-	 * 
+	 *
 	 * @param player
 	 * @return
 	 */
 	public Map<Booster, Integer> getAllBoosters(OfflinePlayer player) {
-		Map<Booster, Integer> boosters = new HashMap<Booster, Integer>();
+		Map<Booster, Integer> boosters = new HashMap<>();
 		if (!isConnected())
 			return boosters;
 
@@ -249,7 +251,8 @@ public class BoosterDatabase extends SqlDatabase implements Listener {
 		if (result.isEmpty())
 			return null;
 
-		@SuppressWarnings("deprecation") OfflinePlayer player = Bukkit.getOfflinePlayer(result.get(0).get(0));
+		@SuppressWarnings("deprecation")
+		OfflinePlayer player = Bukkit.getOfflinePlayer(result.get(0).get(0));
 		Booster booster = Booster.get(result.get(0).get(1));
 		QueuedBooster queuedBooster = new QueuedBooster(booster, player);
 		queuedBooster.setStartTime(Long.parseLong(result.get(0).get(2)));
@@ -267,7 +270,8 @@ public class BoosterDatabase extends SqlDatabase implements Listener {
 		if (result.isEmpty())
 			return null;
 
-		@SuppressWarnings("deprecation") OfflinePlayer player = Bukkit.getOfflinePlayer(result.get(0).get(0));
+		@SuppressWarnings("deprecation")
+		OfflinePlayer player = Bukkit.getOfflinePlayer(result.get(0).get(0));
 		Booster booster = Booster.get(result.get(0).get(1));
 		QueuedBooster queuedBooster = new QueuedBooster(booster, player);
 		queuedBooster.setStartTime(Long.parseLong(result.get(0).get(2)));
@@ -276,7 +280,7 @@ public class BoosterDatabase extends SqlDatabase implements Listener {
 	}
 
 	public List<QueuedBooster> getQueue(String queue) {
-		List<QueuedBooster> boosters = new ArrayList<QueuedBooster>();
+		List<QueuedBooster> boosters = new ArrayList<>();
 		if (!isConnected())
 			return boosters;
 		String query = "SELECT player, boosterID, startTime FROM " + queueTable + " WHERE queueType = '" + queue
@@ -285,7 +289,8 @@ public class BoosterDatabase extends SqlDatabase implements Listener {
 		List<SQLRow> result = query(query);
 
 		for (SQLRow row : result) {
-			@SuppressWarnings("deprecation") OfflinePlayer player = Bukkit.getOfflinePlayer(row.get(0));
+			@SuppressWarnings("deprecation")
+			OfflinePlayer player = Bukkit.getOfflinePlayer(row.get(0));
 			Booster booster = Booster.get(row.get(1));
 			QueuedBooster queuedBooster = new QueuedBooster(booster, player);
 			queuedBooster.setStartTime(Long.parseLong(row.get(2)));
@@ -325,12 +330,12 @@ public class BoosterDatabase extends SqlDatabase implements Listener {
 
 	private Set<String> getTippers(QueuedBooster b) {
 		if (!isConnected())
-			return new HashSet<String>();
+			return new HashSet<>();
 		String query = "SELECT tippers FROM " + queueTable + " WHERE player ='" + b.getPlayer().getName()
 				+ "' AND boosterID = '" + b.getBooster().getID() + "';";
 		List<SQLRow> result = query(query);
 
-		return new HashSet<String>(Arrays.asList(result.get(0).get(0).split(":")));
+		return new HashSet<>(Arrays.asList(result.get(0).get(0).split(":")));
 	}
 
 	public void addTipper(QueuedBooster b, Player player) {

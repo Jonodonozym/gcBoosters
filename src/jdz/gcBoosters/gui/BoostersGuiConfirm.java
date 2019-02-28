@@ -12,9 +12,9 @@ import jdz.gcBoosters.data.Booster;
 public class BoostersGuiConfirm extends GuiMenuConfirmDialogue {
 	private final Booster b;
 	private final BoostersGUI superMenu;
-	
+
 	public BoostersGuiConfirm(Player player, Booster b, BoostersGUI superMenu) {
-		super(GCBoosters.instance, ChatColor.RED+"Are you sure?");
+		super(GCBoosters.instance, ChatColor.RED + "Are you sure?");
 		this.b = b;
 		this.superMenu = superMenu;
 	}
@@ -24,7 +24,7 @@ public class BoostersGuiConfirm extends GuiMenuConfirmDialogue {
 		BoosterStartCommand.startBooster(player, player, b);
 		player.closeInventory();
 	}
-	
+
 	@Override
 	public void onCancel(Player player) {
 		superMenu.open(player);

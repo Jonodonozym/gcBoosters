@@ -18,7 +18,7 @@ public abstract class BoosterEvent extends Event {
 	private final OfflinePlayer player;
 	private final Booster booster;
 	private final Long startTime;
-	
+
 	public BoosterEvent(QueuedBooster b) {
 		this(b, b.getPlayer(), b.getBooster(), b.getStartTime());
 	}

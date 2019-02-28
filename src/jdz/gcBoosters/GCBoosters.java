@@ -18,38 +18,39 @@ import jdz.gcBoosters.tasks.BoosterBroadcaster;
 import jdz.gcBoosters.tasks.BoosterQueueChecker;
 import me.clip.placeholderapi.PlaceholderAPI;
 
-public class GCBoosters extends JavaPlugin{
+public class GCBoosters extends JavaPlugin {
 	public static GCBoosters instance;
 
 	@Override
 	public void onEnable() {
 		instance = this;
-		
+
 		BoosterConfig.reload(this);
-		
+
 		new BoosterCommandExecutor(this).register();
 		new ABoosterCommandExecutor(this).register();
-		
+
 		BoosterDatabase.getInstance();
-		
+
 		PluginManager pm = Bukkit.getPluginManager();
 		pm.registerEvents(new BoosterBroadcaster(), this);
-		
+
 		BoosterQueueChecker.getInstance();
-		
-		for (RegisteredListener l: HandlerList.getRegisteredListeners(this))
+
+		for (RegisteredListener l : HandlerList.getRegisteredListeners(this))
 			try {
-				for (Player p: Bukkit.getOnlinePlayers())
-				l.callEvent(new PlayerJoinEvent(p, ""));
-			} catch (EventException e) {
+				for (Player p : Bukkit.getOnlinePlayers())
+					l.callEvent(new PlayerJoinEvent(p, ""));
+			}
+			catch (EventException e) {
 				new FileLogger(this).createErrorLog(e);
 			}
-		
+
 		PlaceholderAPI.registerPlaceholderHook(this, new PlaceholderHook());
 	}
-	
+
 	@Override
 	public void onDisable() {
-		
+
 	}
 }

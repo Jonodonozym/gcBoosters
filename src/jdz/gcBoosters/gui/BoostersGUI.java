@@ -27,7 +27,7 @@ public class BoostersGUI extends GuiMenu {
 		super(GCBoosters.instance);
 		this.player = player;
 
-		inv = Bukkit.createInventory(player, 36, ChatColor.AQUA+"My Boosters");
+		inv = Bukkit.createInventory(player, 36, ChatColor.AQUA + "My Boosters");
 		refreshStacks();
 	}
 
@@ -37,27 +37,29 @@ public class BoostersGUI extends GuiMenu {
 		ClickableStackCommands returnArrow = new ClickableStackCommands(Material.ARROW,
 				ChatColor.AQUA + (BoosterConfig.returnCommand.equals("") ? "Exit" : "Return"), false,
 				Arrays.asList(BoosterConfig.returnCommand));
-		
+
 		if (BoosterConfig.returnCommand.equals(""))
 			returnArrow.closeOnClick();
-		
+
 		setItem(returnArrow, 31, inv);
 
 		Bukkit.getScheduler().runTaskAsynchronously(GCBoosters.instance, () -> {
 			int i = 0;
 			Map<Booster, Integer> boosters = BoosterDatabase.getInstance().getAllBoosters(player);
-			
+
 			for (Booster b : boosters.keySet())
 				for (int j = 0; j < boosters.get(b); j++)
 					setItem(getBoosterStack(b), i++, inv);
-			
-			if (i==0)
-				setItem(new ClickableStackNothing(BoosterConfig.noBoostersIcon, BoosterConfig.noBoostersName, BoosterConfig.noBoostersLore), 13, inv);
+
+			if (i == 0)
+				setItem(new ClickableStackNothing(BoosterConfig.noBoostersIcon, BoosterConfig.noBoostersName,
+						BoosterConfig.noBoostersLore), 13, inv);
 		});
 	}
 
 	private ClickableStackLinkedMenu getBoosterStack(Booster b) {
-		ClickableStackLinkedMenu stack = new ClickableStackLinkedMenu(b.getStack().getType(), ChatColor.RESET+""+ChatColor.GREEN+b.getName(), b.getStack().getItemMeta().getLore(), 
+		ClickableStackLinkedMenu stack = new ClickableStackLinkedMenu(b.getStack().getType(),
+				ChatColor.RESET + "" + ChatColor.GREEN + b.getName(), b.getStack().getItemMeta().getLore(),
 				new BoostersGuiConfirm(player, b, this));
 		stack.getStack().setDurability(b.getStack().getDurability());
 

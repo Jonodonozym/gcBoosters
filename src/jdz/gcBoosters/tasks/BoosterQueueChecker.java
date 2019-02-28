@@ -16,33 +16,34 @@ import lombok.Getter;
 
 public class BoosterQueueChecker {
 	@Getter private static final BoosterQueueChecker instance = new BoosterQueueChecker();
-	
-	@Getter private final Map<String, QueuedBooster> activeBoosters = new HashMap<String, QueuedBooster>();
-	@Getter private final Map<String, QueuedBooster> nextBoosters = new HashMap<String, QueuedBooster>();
-	
+
+	@Getter private final Map<String, QueuedBooster> activeBoosters = new HashMap<>();
+	@Getter private final Map<String, QueuedBooster> nextBoosters = new HashMap<>();
+
 	private BoosterQueueChecker() {
-		Bukkit.getScheduler().runTaskTimerAsynchronously(GCBoosters.instance, ()->{
-			for (String queue: Booster.getQueues())
+		Bukkit.getScheduler().runTaskTimerAsynchronously(GCBoosters.instance, () -> {
+			for (String queue : Booster.getQueues())
 				if (BoosterDatabase.getInstance().isRunning(queue)) {
 					QueuedBooster booster = BoosterDatabase.getInstance().peek(queue);
 					QueuedBooster lastBooster = activeBoosters.get(queue);
-					
+
 					if (lastBooster == null) {
 						new BoosterStartEvent(booster).call();
 						activeBoosters.put(queue, booster);
 					}
-					
+
 					else if (!booster.equals(lastBooster)) {
 						activeBoosters.put(queue, booster);
 						new BoosterEndEvent(lastBooster).call();
 						new BoosterStartEvent(booster).call();
-					} 
-					
-					else if (lastBooster.getStartTime() != 0 && lastBooster.getStartTime() + lastBooster.getBooster().getDuration()*60*1000 < System.currentTimeMillis()){
+					}
+
+					else if (lastBooster.getStartTime() != 0 && lastBooster.getStartTime()
+							+ lastBooster.getBooster().getDuration() * 60 * 1000 < System.currentTimeMillis()) {
 						BoosterDatabase.getInstance().dequeue(lastBooster.getPlayer(), lastBooster.getBooster());
 						lastBooster.getBooster().executeEndCommands(lastBooster.getPlayer());
 					}
-					
+
 					nextBoosters.put(queue, BoosterDatabase.getInstance().getNext(queue));
 				}
 				else {
