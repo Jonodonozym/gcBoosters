@@ -21,15 +21,15 @@ import net.md_5.bungee.api.ChatColor;
 @CommandUsage("give <boosterID> <player>")
 @CommandShortDescription("Gives a player the specified booster")
 @CommandPermission("booster.admin")
-public class ABoosterGiveCommand  extends SubCommand {	
+public class ABoosterGiveCommand extends SubCommand {
 	@CommandMethod
 	public void addBooster(CommandSender sender, String boosterID, OfflinePlayer target) {
 		Booster booster = Booster.get(boosterID);
 		if (booster == null) {
-			sender.sendMessage(ChatColor.RED+"No booster found called '"+boosterID+"'");
+			sender.sendMessage(ChatColor.RED + "No booster found called '" + boosterID + "'");
 			return;
 		}
 		BoosterDatabase.getInstance().addBooster(target, booster);
-		sender.sendMessage(ChatColor.GREEN+target.getName()+" was given a "+boosterID+" booster!");
+		sender.sendMessage(ChatColor.GREEN + target.getName() + " was given a " + boosterID + " booster!");
 	}
 }

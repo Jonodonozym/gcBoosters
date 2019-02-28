@@ -13,15 +13,11 @@ import jdz.bukkitUtils.commands.annotations.CommandExecutorPlayerOnly;
 
 @CommandExecutorAlias("boosters")
 @CommandExecutorPlayerOnly
-public class BoosterCommandExecutor extends CommandExecutor{
+public class BoosterCommandExecutor extends CommandExecutor {
 
-	private final List<SubCommand> subCommands = Arrays.asList(
-			new BoosterStartCommand(),
-			new BoosterStopCommand(),
-			new BoosterListCommand(),
-			new BoosterQueueCommand()
-			);
-	
+	private final List<SubCommand> subCommands = Arrays.asList(new BoosterStartCommand(), new BoosterStopCommand(),
+			new BoosterListCommand(), new BoosterQueueCommand());
+
 	public BoosterCommandExecutor(JavaPlugin plugin) {
 		super(plugin, "booster", true);
 		setDefaultCommand(new BoosterDefaultCommand());

@@ -5,7 +5,6 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 
 import jdz.bukkitUtils.commands.SubCommand;
-import jdz.bukkitUtils.commands.annotations.CommandAsync;
 import jdz.bukkitUtils.commands.annotations.CommandLabel;
 import jdz.bukkitUtils.commands.annotations.CommandMethod;
 import jdz.bukkitUtils.commands.annotations.CommandPermission;
@@ -19,10 +18,9 @@ import jdz.gcBoosters.commands.member.BoosterListCommand;
 @CommandPermission("booster.admin")
 @CommandUsage("list [player]")
 @CommandShortDescription("Lists the boosters a player has")
-@CommandAsync
 public class ABoosterListCommand extends SubCommand {
 	private static final BoosterListCommand listCommand = new BoosterListCommand();
-	
+
 	@CommandMethod
 	public void list(CommandSender sender, OfflinePlayer target) {
 		listCommand.list(sender, target);

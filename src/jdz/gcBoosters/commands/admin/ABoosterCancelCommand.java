@@ -1,11 +1,9 @@
-
 package jdz.gcBoosters.commands.admin;
 
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 
 import jdz.bukkitUtils.commands.SubCommand;
-import jdz.bukkitUtils.commands.annotations.CommandAsync;
 import jdz.bukkitUtils.commands.annotations.CommandLabel;
 import jdz.bukkitUtils.commands.annotations.CommandMethod;
 import jdz.bukkitUtils.commands.annotations.CommandPermission;
@@ -21,18 +19,18 @@ import net.md_5.bungee.api.ChatColor;
 @CommandShortDescription("Remove the booster from the queue and returns it to the player")
 @CommandUsage("cancel <boosterID> <player>")
 @CommandRequiredArgs(2)
-@CommandAsync
-public class ABoosterCancelCommand  extends SubCommand {
+public class ABoosterCancelCommand extends SubCommand {
 	@CommandMethod
 	public void cancel(CommandSender sender, String boosterID, OfflinePlayer player) {
 		Booster booster = Booster.get(boosterID);
 		if (booster == null) {
-			sender.sendMessage(ChatColor.RED+"No booster found called '"+boosterID+"'");
+			sender.sendMessage(ChatColor.RED + "No booster found called '" + boosterID + "'");
 			return;
 		}
 		if (BoosterDatabase.getInstance().dequeue(player, booster))
-			sender.sendMessage(ChatColor.GREEN+player.getName()+"'s "+booster.getName()+" booster was de-queued and redeemed");
+			sender.sendMessage(ChatColor.GREEN + player.getName() + "'s " + booster.getName()
+					+ " booster was de-queued and redeemed");
 		else
-			sender.sendMessage(ChatColor.RED+player.getName()+" has no "+booster.getName()+" booster queued");
+			sender.sendMessage(ChatColor.RED + player.getName() + " has no " + booster.getName() + " booster queued");
 	}
 }

@@ -5,7 +5,6 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 
 import jdz.bukkitUtils.commands.SubCommand;
-import jdz.bukkitUtils.commands.annotations.CommandAsync;
 import jdz.bukkitUtils.commands.annotations.CommandLabel;
 import jdz.bukkitUtils.commands.annotations.CommandMethod;
 import jdz.bukkitUtils.commands.annotations.CommandPermission;
@@ -21,21 +20,21 @@ import net.md_5.bungee.api.ChatColor;
 @CommandUsage("remove <boosterID> <player>")
 @CommandShortDescription("Removes a specified booster from a player")
 @CommandPermission("booster.admin")
-@CommandAsync
 public class ABoosterRemoveCommand extends SubCommand {
 
 	@CommandMethod
 	public void removeBooster(CommandSender sender, String boosterID, OfflinePlayer target) {
 		Booster booster = Booster.get(boosterID);
 		if (booster == null) {
-			sender.sendMessage(ChatColor.RED+"No booster found called '"+boosterID+"'");
+			sender.sendMessage(ChatColor.RED + "No booster found called '" + boosterID + "'");
 			return;
 		}
 		if (!BoosterDatabase.getInstance().hasBooster(target, booster)) {
-			sender.sendMessage(ChatColor.RED+target.getName()+" doesn't have any "+booster.getQueue()+" boosters");
+			sender.sendMessage(
+					ChatColor.RED + target.getName() + " doesn't have any " + booster.getQueue() + " boosters");
 			return;
 		}
 		BoosterDatabase.getInstance().removeBooster(target, booster);
-		sender.sendMessage(ChatColor.GREEN + boosterID + " was taken from "+target.getName());
+		sender.sendMessage(ChatColor.GREEN + boosterID + " was taken from " + target.getName());
 	}
 }

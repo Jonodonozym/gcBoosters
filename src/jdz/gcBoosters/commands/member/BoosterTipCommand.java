@@ -14,7 +14,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
 import jdz.bukkitUtils.commands.Command;
-import jdz.bukkitUtils.commands.annotations.CommandAsync;
 import jdz.bukkitUtils.commands.annotations.CommandLabel;
 import jdz.bukkitUtils.commands.annotations.CommandRequiredArgs;
 import jdz.bukkitUtils.commands.annotations.CommandUsage;
@@ -29,11 +28,10 @@ import lombok.Getter;
 @CommandLabel("tip")
 @CommandRequiredArgs(2)
 @CommandUsage("tip <player> <boosterID>")
-@CommandAsync
 public class BoosterTipCommand extends Command implements Listener {
 	@Getter private static final BoosterTipCommand instance = new BoosterTipCommand();
-	
-	static final Map<QueuedBooster, Set<Player>> activeBoosters = new HashMap<QueuedBooster, Set<Player>>();
+
+	static final Map<QueuedBooster, Set<Player>> activeBoosters = new HashMap<>();
 
 	private BoosterTipCommand() {
 		Bukkit.getPluginManager().registerEvents(this, GCBoosters.instance);
@@ -42,26 +40,26 @@ public class BoosterTipCommand extends Command implements Listener {
 
 	@Override
 	public void execute(CommandSender sender, String... args) {
-		for (QueuedBooster b: activeBoosters.keySet()) {
+		for (QueuedBooster b : activeBoosters.keySet())
 			if (b.getPlayer().getName().equalsIgnoreCase(args[0]) && b.getBooster().getID().equalsIgnoreCase(args[1])) {
-				Pair<Boolean, String> result = tip((Player)sender, b);
+				Pair<Boolean, String> result = tip((Player) sender, b);
 				if (!result.getKey())
 					sender.sendMessage(result.getValue());
 				return;
 			}
-		}
-		
+
 	}
 
 	public Pair<Boolean, String> tip(Player tipper, QueuedBooster b) {
 		if (!b.getBooster().isTipping())
-			return new Pair<Boolean, String>(false, ChatColor.RED+"Tipping is disabled for this booster");
+			return new Pair<>(false, ChatColor.RED + "Tipping is disabled for this booster");
 
 		if (!b.getBooster().isOfflineTipping() && !b.getPlayer().isOnline())
-			return new Pair<Boolean, String>(false, ChatColor.RED+"You cannot tip while "+b.getPlayer().getName()+" is offline");
+			return new Pair<>(false,
+					ChatColor.RED + "You cannot tip while " + b.getPlayer().getName() + " is offline");
 
 		if (activeBoosters.get(b).contains(tipper) || BoosterDatabase.getInstance().hasTipped(b, tipper))
-			return new Pair<Boolean, String>(false, ChatColor.RED+"You have already tipped this player");
+			return new Pair<>(false, ChatColor.RED + "You have already tipped this player");
 
 		activeBoosters.get(b).add(tipper);
 		BoosterDatabase.getInstance().addTipper(b, tipper);
@@ -77,7 +75,7 @@ public class BoosterTipCommand extends Command implements Listener {
 			for (String message : b.getBooster().getTippedMessages())
 				b.getPlayer().getPlayer().sendMessage(withPlaceholders(tipper, b, message));
 
-		return new Pair<Boolean, String>(true, "");
+		return new Pair<>(true, "");
 	}
 
 	private String withPlaceholders(Player tipper, QueuedBooster b, String message) {

@@ -12,16 +12,10 @@ import jdz.gcBoosters.GCBoosters;
 @CommandExecutorPermission("booster.admin")
 public class ABoosterCommandExecutor extends CommandExecutor {
 
-	private final List<SubCommand> subCommands = Arrays.asList(
-			new ABoosterListCommand(),
-			new ABoosterGiveCommand(),
-			new ABoosterRemoveCommand(),
-			new ABoosterCancelCommand(),
-			new ABoosterSoftstopCommand(),
-			new ABoosterHardstopCommand(),
-			new ABoosterOpenCommand()
-			);
-	
+	private final List<SubCommand> subCommands = Arrays.asList(new ABoosterListCommand(), new ABoosterGiveCommand(),
+			new ABoosterRemoveCommand(), new ABoosterCancelCommand(), new ABoosterSoftstopCommand(),
+			new ABoosterHardstopCommand(), new ABoosterOpenCommand());
+
 	public ABoosterCommandExecutor(GCBoosters plugin) {
 		super(plugin, "abooster", false);
 	}
