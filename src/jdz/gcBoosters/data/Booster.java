@@ -16,7 +16,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import jdz.bukkitUtils.misc.utils.ColorUtils;
+import jdz.bukkitUtils.utils.ColorUtils;
 import jdz.gcBoosters.GCBoosters;
 import lombok.Getter;
 

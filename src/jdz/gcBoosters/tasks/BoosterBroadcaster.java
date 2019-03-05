@@ -6,7 +6,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
-import jdz.bukkitUtils.misc.utils.TimeUtils;
+import jdz.bukkitUtils.utils.TimeUtils;
 import jdz.gcBoosters.BoosterConfig;
 import jdz.gcBoosters.event.BoosterEndEvent;
 import jdz.gcBoosters.event.BoosterEvent;
@@ -22,36 +22,38 @@ public class BoosterBroadcaster implements Listener {
 		if (System.currentTimeMillis() - event.getStartTime() > 120000)
 			return;
 
-		String[] newMessages = new String[BoosterConfig.broadcastStartMessages.length];
+		String[] newMessages = new String[BoosterConfig.getBroadcastEndMessages().size()];
 		for (int i = 0; i < newMessages.length; i++)
-			newMessages[i] = withPlaceHolders(BoosterConfig.broadcastStartMessages[i], event);
+			newMessages[i] = withPlaceHolders(BoosterConfig.getBroadcastStartMessages().get(i), event);
 
 		Bukkit.getConsoleSender().sendMessage(newMessages);
 
-		if (BoosterConfig.broadcast) {
-
+		if (BoosterConfig.isBroadcastEnabled()) {
 			for (Player player : Bukkit.getOnlinePlayers())
 				player.sendMessage(newMessages);
 
-			if (BoosterConfig.clickableTip) {
-				String clickableTip = withPlaceHolders(BoosterConfig.clickableTipMessage, event);
-				TextComponent clickableTipComp = new TextComponent(clickableTip);
-				clickableTipComp.setClickEvent(new ClickEvent(Action.RUN_COMMAND,
-						"/tip " + event.getPlayer().getName() + " " + event.getBooster().getID()));
-
-				for (Player player : Bukkit.getOnlinePlayers())
-					player.spigot().sendMessage(clickableTipComp);
-			}
+			if (BoosterConfig.isClickableTipEnabled())
+				broadcastClickableTip(event);
 		}
+	}
+
+	private void broadcastClickableTip(BoosterStartEvent event) {
+		String clickableTip = withPlaceHolders(BoosterConfig.getClickableTipMessage(), event);
+		TextComponent clickableTipComp = new TextComponent(clickableTip);
+		clickableTipComp.setClickEvent(new ClickEvent(Action.RUN_COMMAND,
+				"/tip " + event.getPlayer().getName() + " " + event.getBooster().getID()));
+
+		for (Player player : Bukkit.getOnlinePlayers())
+			player.spigot().sendMessage(clickableTipComp);
 	}
 
 	@EventHandler
 	public void onBoosterEnd(BoosterEndEvent event) {
-		String[] newMessages = new String[BoosterConfig.broadcastEndMessages.length];
+		String[] newMessages = new String[BoosterConfig.getBroadcastEndMessages().size()];
 		for (int i = 0; i < newMessages.length; i++)
-			newMessages[i] = withPlaceHolders(BoosterConfig.broadcastEndMessages[i], event);
+			newMessages[i] = withPlaceHolders(BoosterConfig.getBroadcastEndMessages().get(i), event);
 
-		if (BoosterConfig.broadcast)
+		if (BoosterConfig.isBroadcastEnabled())
 			for (Player player : Bukkit.getOnlinePlayers())
 				player.sendMessage(newMessages);
 

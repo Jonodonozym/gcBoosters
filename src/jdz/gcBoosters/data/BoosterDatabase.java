@@ -16,22 +16,22 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 
-import jdz.bukkitUtils.misc.StringUtils;
-import jdz.bukkitUtils.sql.SQLColumn;
-import jdz.bukkitUtils.sql.SQLColumnType;
-import jdz.bukkitUtils.sql.SQLRow;
-import jdz.bukkitUtils.sql.SqlDatabase;
+import jdz.bukkitUtils.persistence.SQLColumn;
+import jdz.bukkitUtils.persistence.SQLColumnType;
+import jdz.bukkitUtils.persistence.SQLRow;
+import jdz.bukkitUtils.persistence.minecraft.BukkitDatabase;
+import jdz.bukkitUtils.utils.StringUtils;
 import jdz.gcBoosters.BoosterConfig;
 import jdz.gcBoosters.GCBoosters;
 import lombok.Getter;
 
-public class BoosterDatabase extends SqlDatabase implements Listener {
+public class BoosterDatabase extends BukkitDatabase implements Listener {
 	@Getter private static BoosterDatabase instance = new BoosterDatabase(GCBoosters.instance);
 
-	private final String ownedTable = "gcBoosters_" + BoosterConfig.serverGroup + "_owned";
+	private final String ownedTable = "gcBoosters_" + BoosterConfig.getServerGroup() + "_owned";
 	private final SQLColumn[] ownedTableColumns = new SQLColumn[] { new SQLColumn("player", SQLColumnType.STRING_128) };
 
-	private final String queueTable = "gcBoosters_" + BoosterConfig.serverGroup + "_queue";
+	private final String queueTable = "gcBoosters_" + BoosterConfig.getServerGroup() + "_queue";
 	private final SQLColumn[] queueTableColumns = new SQLColumn[] { new SQLColumn("player", SQLColumnType.STRING_128),
 			new SQLColumn("boosterID", SQLColumnType.STRING_128), new SQLColumn("queueType", SQLColumnType.STRING_64),
 			new SQLColumn("queuePos", SQLColumnType.INT_1_BYTE), new SQLColumn("startTime", SQLColumnType.LONG),
@@ -56,10 +56,11 @@ public class BoosterDatabase extends SqlDatabase implements Listener {
 			addTable(queueTable, queueTableColumns);
 			addTable(settingsTable, settingsTableColumns);
 			boolean missingServer = query(
-					"SELECT * FROM " + settingsTable + " WHERE serverGroup = '" + BoosterConfig.serverGroup + "';")
+					"SELECT * FROM " + settingsTable + " WHERE serverGroup = '" + BoosterConfig.getServerGroup() + "';")
 							.isEmpty();
 			if (missingServer)
-				update("INSERT INTO " + settingsTable + " (serverGroup) VALUES ('" + BoosterConfig.serverGroup + "');");
+				update("INSERT INTO " + settingsTable + " (serverGroup) VALUES ('" + BoosterConfig.getServerGroup()
+						+ "');");
 			for (Booster b : Booster.getBoosters())
 				addColumn(ownedTable, new SQLColumn(b.getID(), SQLColumnType.INT_1_BYTE));
 		});
@@ -89,7 +90,7 @@ public class BoosterDatabase extends SqlDatabase implements Listener {
 
 	public void softStop() {
 		updateAsync("UPDATE " + settingsTable + " SET isStopped = TRUE WHERE serverGroup = '"
-				+ BoosterConfig.serverGroup + "';");
+				+ BoosterConfig.getServerGroup() + "';");
 
 		String query = "SELECT player, boosterID FROM " + queueTable + " WHERE queuePos != 0;";
 		List<SQLRow> result = query(query);
@@ -106,9 +107,9 @@ public class BoosterDatabase extends SqlDatabase implements Listener {
 
 	public void hardStop() {
 		updateAsync("UPDATE " + settingsTable + " SET isStopped = TRUE WHERE serverGroup = '"
-				+ BoosterConfig.serverGroup + "';");
+				+ BoosterConfig.getServerGroup() + "';");
 		updateAsync("UPDATE " + settingsTable + " SET isHardStopped = TRUE WHERE serverGroup = '"
-				+ BoosterConfig.serverGroup + "';");
+				+ BoosterConfig.getServerGroup() + "';");
 
 		String query = "SELECT player, boosterID FROM " + queueTable + ";";
 		List<SQLRow> result = query(query);
@@ -125,24 +126,23 @@ public class BoosterDatabase extends SqlDatabase implements Listener {
 
 	public void open() {
 		updateAsync("UPDATE " + settingsTable + " SET isHardStopped = FALSE WHERE serverGroup = '"
-				+ BoosterConfig.serverGroup + "';");
+				+ BoosterConfig.getServerGroup() + "';");
 		updateAsync("UPDATE " + settingsTable + " SET isStopped = FALSE WHERE serverGroup = '"
-				+ BoosterConfig.serverGroup + "';");
+				+ BoosterConfig.getServerGroup() + "';");
 	}
 
 	public boolean isStopped() {
 		if (!isConnected())
 			return true;
-		return Integer.parseInt(query(
-				"SELECT isStopped FROM " + settingsTable + " WHERE serverGroup = '" + BoosterConfig.serverGroup + "';")
-						.get(0).get(0)) == 1;
+		return Integer.parseInt(query("SELECT isStopped FROM " + settingsTable + " WHERE serverGroup = '"
+				+ BoosterConfig.getServerGroup() + "';").get(0).get(0)) == 1;
 	}
 
 	public boolean isHardStopped() {
 		if (!isConnected())
 			return true;
 		return Integer.parseInt(query("SELECT isHardStopped FROM " + settingsTable + " WHERE serverGroup = '"
-				+ BoosterConfig.serverGroup + "';").get(0).get(0)) == 1;
+				+ BoosterConfig.getServerGroup() + "';").get(0).get(0)) == 1;
 	}
 
 	// owned

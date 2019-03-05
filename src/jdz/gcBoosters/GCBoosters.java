@@ -16,16 +16,16 @@ import jdz.gcBoosters.data.BoosterDatabase;
 import jdz.gcBoosters.hooks.PlaceholderHook;
 import jdz.gcBoosters.tasks.BoosterBroadcaster;
 import jdz.gcBoosters.tasks.BoosterQueueChecker;
-import me.clip.placeholderapi.PlaceholderAPI;
+import lombok.Getter;
 
 public class GCBoosters extends JavaPlugin {
-	public static GCBoosters instance;
+	@Getter public static GCBoosters instance;
 
 	@Override
 	public void onEnable() {
 		instance = this;
 
-		BoosterConfig.reload(this);
+		new BoosterConfig(this).register();
 
 		new BoosterCommandExecutor(this).register();
 		new ABoosterCommandExecutor(this).register();
@@ -46,7 +46,7 @@ public class GCBoosters extends JavaPlugin {
 				new FileLogger(this).createErrorLog(e);
 			}
 
-		PlaceholderAPI.registerPlaceholderHook(this, new PlaceholderHook());
+		new PlaceholderHook().register();
 	}
 
 	@Override

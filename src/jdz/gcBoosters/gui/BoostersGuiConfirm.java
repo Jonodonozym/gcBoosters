@@ -4,7 +4,7 @@ package jdz.gcBoosters.gui;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
-import jdz.bukkitUtils.guiMenu.guis.GuiMenuConfirmDialogue;
+import jdz.bukkitUtils.components.guiMenu.guis.GuiMenuConfirmDialogue;
 import jdz.gcBoosters.GCBoosters;
 import jdz.gcBoosters.commands.member.BoosterStartCommand;
 import jdz.gcBoosters.data.Booster;

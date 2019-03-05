@@ -3,17 +3,12 @@ package jdz.gcBoosters.hooks;
 
 import org.bukkit.entity.Player;
 
-import jdz.bukkitUtils.misc.utils.TimeUtils;
-import jdz.gcBoosters.GCBoosters;
+import jdz.bukkitUtils.utils.TimeUtils;
 import jdz.gcBoosters.data.QueuedBooster;
 import jdz.gcBoosters.tasks.BoosterQueueChecker;
-import me.clip.placeholderapi.external.EZPlaceholderHook;
+import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 
-public class PlaceholderHook extends EZPlaceholderHook {
-
-	public PlaceholderHook() {
-		super(GCBoosters.instance, "gcBoosters");
-	}
+public class PlaceholderHook extends PlaceholderExpansion {
 
 	@Override
 	public String onPlaceholderRequest(Player player, String identifier) {
@@ -55,6 +50,21 @@ public class PlaceholderHook extends EZPlaceholderHook {
 			return "";
 		return TimeUtils.timeFromMinutes((int) (b.getStartTime() / 1000 / 60 + b.getBooster().getDuration()
 				- System.currentTimeMillis() / 1000 / 60));
+	}
+
+	@Override
+	public String getAuthor() {
+		return "Jonodonozym";
+	}
+
+	@Override
+	public String getIdentifier() {
+		return "gcBoosters";
+	}
+
+	@Override
+	public String getVersion() {
+		return "1.0";
 	}
 }
 

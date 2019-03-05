@@ -6,59 +6,50 @@ import java.util.List;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.Plugin;
 
-import jdz.bukkitUtils.misc.Config;
-import jdz.bukkitUtils.misc.utils.ColorUtils;
+import jdz.bukkitUtils.configuration.AutoConfig;
+import jdz.bukkitUtils.configuration.ConfigReloadEvent;
+import jdz.bukkitUtils.utils.ItemUtils;
 import jdz.gcBoosters.data.Booster;
+import lombok.Getter;
 
-public class BoosterConfig {
+public class BoosterConfig extends AutoConfig {
+	@Getter private static String serverGroup = "default";
 
-	public static String serverGroup = "default";
-
-	public static String returnCommand = "";
-	public static Material noBoostersIcon = Material.PAPER;
-	public static String noBoostersName = ChatColor.GRAY + "You have no boosters";
-	public static List<String> noBoostersLore = Collections
+	@Getter private static String returnCommand = "";
+	private static Material noBoostersIcon = Material.PAPER;
+	private static String noBoostersName = ChatColor.GRAY + "You have no boosters";
+	private static List<String> noBoostersLore = Collections
 			.unmodifiableList(Arrays.asList(ChatColor.GRAY + "You don't have any boosters"));
 
-	public static boolean broadcast = true;
-	public static String[] broadcastStartMessages = new String[] { "%player% has activated a %booster% booster" };
-	public static String[] broadcastEndMessages = new String[] { "%player%'s %booster% booster has ended" };
-	public static boolean clickableTip = false;
-	public static String clickableTipMessage = "";
+	public static ItemStack getNoBoostersIcon() {
+		ItemStack item = new ItemStack(noBoostersIcon);
+		ItemUtils.setName(item, noBoostersName);
+		ItemUtils.setLore(item, noBoostersLore);
+		return item;
+	}
 
-	public static void reload(GCBoosters plugin) {
-		FileConfiguration config = Config.getConfig(GCBoosters.instance);
+	@Getter private static boolean broadcastEnabled = true;
+	@Getter private static List<String> broadcastStartMessages = Arrays
+			.asList("%player% has activated a %booster% booster");
+	@Getter private static List<String> broadcastEndMessages = Arrays.asList("%player%'s %booster% booster has ended");
+	@Getter private static boolean clickableTipEnabled = false;
+	@Getter private static String clickableTipMessage = "";
 
-		serverGroup = config.getString("serverGroup");
-		if (serverGroup.equals(""))
-			serverGroup = "default";
+	public BoosterConfig(Plugin plugin) {
+		super(plugin, "settings");
+	}
 
-		returnCommand = config.getString("settings.returnCommand");
-		try {
-			noBoostersIcon = Material.valueOf(config.getString("settings.noBoostersIcon"));
-		}
-		catch (Exception e) {
-			plugin.getLogger().warning("Invalid noBoostersIcon '" + config.getString("settings.noBoostersIcon")
-					+ "' in config.yml, defaulting to paper");
-			noBoostersIcon = Material.PAPER;
-		}
-		noBoostersName = ColorUtils.translate(config.getString("settings.noBoostersName"));
-
-		noBoostersLore = Collections
-				.unmodifiableList(ColorUtils.translate(config.getStringList("settings.noBoostersLore")));
-
-		broadcast = config.getBoolean("settings.broadcast");
-		broadcastStartMessages = ColorUtils
-				.translate(config.getStringList("settings.broadcastStartMessages").toArray(new String[1]));
-		broadcastEndMessages = ColorUtils
-				.translate(config.getStringList("settings.broadcastEndMessages").toArray(new String[1]));
-		clickableTip = config.getBoolean("settings.clickableTip");
-		clickableTipMessage = ColorUtils.translate(config.getString("settings.clickableTipMessage"));
+	@Override
+	public void onConfigReload(ConfigReloadEvent event) {
+		if (!eventApplies(event))
+			return;
+		super.onConfigReload(event);
 
 		Booster.clearBoosters();
-		for (String boosterName : config.getConfigurationSection("boosters").getKeys(false))
-			new Booster(config, boosterName);
+		for (String boosterName : event.getConfig().getConfigurationSection("boosters").getKeys(false))
+			new Booster(event.getConfig(), boosterName);
 	}
 }

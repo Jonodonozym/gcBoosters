@@ -9,11 +9,13 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.meta.Damageable;
 
-import jdz.bukkitUtils.guiMenu.guis.GuiMenu;
-import jdz.bukkitUtils.guiMenu.itemStacks.ClickableStackCommands;
-import jdz.bukkitUtils.guiMenu.itemStacks.ClickableStackLinkedMenu;
-import jdz.bukkitUtils.guiMenu.itemStacks.ClickableStackNothing;
+import jdz.bukkitUtils.components.guiMenu.guis.GuiMenu;
+import jdz.bukkitUtils.components.guiMenu.itemStacks.ClickableStackCommands;
+import jdz.bukkitUtils.components.guiMenu.itemStacks.ClickableStackLinkedMenu;
+import jdz.bukkitUtils.components.guiMenu.itemStacks.ClickableStackNothing;
+import jdz.bukkitUtils.utils.ItemUtils;
 import jdz.gcBoosters.BoosterConfig;
 import jdz.gcBoosters.GCBoosters;
 import jdz.gcBoosters.data.Booster;
@@ -35,10 +37,10 @@ public class BoostersGUI extends GuiMenu {
 		clear(inv);
 
 		ClickableStackCommands returnArrow = new ClickableStackCommands(Material.ARROW,
-				ChatColor.AQUA + (BoosterConfig.returnCommand.equals("") ? "Exit" : "Return"), false,
-				Arrays.asList(BoosterConfig.returnCommand));
+				ChatColor.AQUA + (BoosterConfig.getReturnCommand().equals("") ? "Exit" : "Return"), false,
+				Arrays.asList(BoosterConfig.getReturnCommand()));
 
-		if (BoosterConfig.returnCommand.equals(""))
+		if (BoosterConfig.getReturnCommand().equals(""))
 			returnArrow.closeOnClick();
 
 		setItem(returnArrow, 31, inv);
@@ -52,8 +54,7 @@ public class BoostersGUI extends GuiMenu {
 					setItem(getBoosterStack(b), i++, inv);
 
 			if (i == 0)
-				setItem(new ClickableStackNothing(BoosterConfig.noBoostersIcon, BoosterConfig.noBoostersName,
-						BoosterConfig.noBoostersLore), 13, inv);
+				setItem(new ClickableStackNothing(BoosterConfig.getNoBoostersIcon()), 13, inv);
 		});
 	}
 
@@ -61,7 +62,9 @@ public class BoostersGUI extends GuiMenu {
 		ClickableStackLinkedMenu stack = new ClickableStackLinkedMenu(b.getStack().getType(),
 				ChatColor.RESET + "" + ChatColor.GREEN + b.getName(), b.getStack().getItemMeta().getLore(),
 				new BoostersGuiConfirm(player, b, this));
-		stack.getStack().setDurability(b.getStack().getDurability());
+
+		if (b.getStack().hasItemMeta() && b.getStack().getItemMeta() instanceof Damageable)
+			ItemUtils.setDamage(stack.getStack(), ((Damageable) b.getStack().getItemMeta()).getDamage());
 
 		return stack;
 	}

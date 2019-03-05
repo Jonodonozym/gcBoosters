@@ -12,7 +12,7 @@ import jdz.bukkitUtils.commands.SubCommand;
 import jdz.bukkitUtils.commands.annotations.CommandLabel;
 import jdz.bukkitUtils.commands.annotations.CommandMethod;
 import jdz.bukkitUtils.commands.annotations.CommandShortDescription;
-import jdz.bukkitUtils.misc.StringUtils;
+import jdz.bukkitUtils.utils.StringUtils;
 import jdz.gcBoosters.data.Booster;
 import jdz.gcBoosters.data.BoosterDatabase;
 import net.md_5.bungee.api.ChatColor;

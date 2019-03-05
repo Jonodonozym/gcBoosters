@@ -17,7 +17,7 @@ import jdz.bukkitUtils.commands.Command;
 import jdz.bukkitUtils.commands.annotations.CommandLabel;
 import jdz.bukkitUtils.commands.annotations.CommandRequiredArgs;
 import jdz.bukkitUtils.commands.annotations.CommandUsage;
-import jdz.bukkitUtils.misc.Pair;
+import jdz.bukkitUtils.components.Pair;
 import jdz.gcBoosters.GCBoosters;
 import jdz.gcBoosters.data.BoosterDatabase;
 import jdz.gcBoosters.data.QueuedBooster;
@@ -55,8 +55,7 @@ public class BoosterTipCommand extends Command implements Listener {
 			return new Pair<>(false, ChatColor.RED + "Tipping is disabled for this booster");
 
 		if (!b.getBooster().isOfflineTipping() && !b.getPlayer().isOnline())
-			return new Pair<>(false,
-					ChatColor.RED + "You cannot tip while " + b.getPlayer().getName() + " is offline");
+			return new Pair<>(false, ChatColor.RED + "You cannot tip while " + b.getPlayer().getName() + " is offline");
 
 		if (activeBoosters.get(b).contains(tipper) || BoosterDatabase.getInstance().hasTipped(b, tipper))
 			return new Pair<>(false, ChatColor.RED + "You have already tipped this player");
