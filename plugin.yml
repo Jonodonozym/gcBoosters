@@ -5,6 +5,7 @@ author: Jonodonozym
 description: Platform for setting up, distributing, queuing and running boosters from other plugins.
 depend: [JBU]
 softdepend: [PlaceholderAPI]
+api-version: 1.13
 
 commands:
   booster:
