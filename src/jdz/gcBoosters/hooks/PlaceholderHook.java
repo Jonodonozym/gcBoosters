@@ -2,18 +2,17 @@
 package jdz.gcBoosters.hooks;
 
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 
 import jdz.bukkitUtils.misc.utils.TimeUtils;
-import jdz.gcBoosters.GCBoosters;
 import jdz.gcBoosters.data.QueuedBooster;
 import jdz.gcBoosters.tasks.BoosterQueueChecker;
-import me.clip.placeholderapi.external.EZPlaceholderHook;
+import lombok.AllArgsConstructor;
+import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 
-public class PlaceholderHook extends EZPlaceholderHook {
-
-	public PlaceholderHook() {
-		super(GCBoosters.instance, "gcBoosters");
-	}
+@AllArgsConstructor
+public class PlaceholderHook extends PlaceholderExpansion {
+	private final Plugin plugin;
 
 	@Override
 	public String onPlaceholderRequest(Player player, String identifier) {
@@ -55,6 +54,21 @@ public class PlaceholderHook extends EZPlaceholderHook {
 			return "";
 		return TimeUtils.timeFromMinutes((int) (b.getStartTime() / 1000 / 60 + b.getBooster().getDuration()
 				- System.currentTimeMillis() / 1000 / 60));
+	}
+
+	@Override
+	public String getAuthor() {
+		return plugin.getDescription().getAuthors().get(0);
+	}
+
+	@Override
+	public String getIdentifier() {
+		return plugin.getName();
+	}
+
+	@Override
+	public String getVersion() {
+		return plugin.getDescription().getVersion();
 	}
 }
 

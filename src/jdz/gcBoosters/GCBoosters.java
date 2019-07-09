@@ -16,7 +16,6 @@ import jdz.gcBoosters.data.BoosterDatabase;
 import jdz.gcBoosters.hooks.PlaceholderHook;
 import jdz.gcBoosters.tasks.BoosterBroadcaster;
 import jdz.gcBoosters.tasks.BoosterQueueChecker;
-import me.clip.placeholderapi.PlaceholderAPI;
 
 public class GCBoosters extends JavaPlugin {
 	public static GCBoosters instance;
@@ -46,7 +45,8 @@ public class GCBoosters extends JavaPlugin {
 				new FileLogger(this).createErrorLog(e);
 			}
 
-		PlaceholderAPI.registerPlaceholderHook(this, new PlaceholderHook());
+		if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null)
+			new PlaceholderHook(this).register();
 	}
 
 	@Override
