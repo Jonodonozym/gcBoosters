@@ -59,6 +59,7 @@ public class BoosterConfig {
 
 		Booster.clearBoosters();
 		for (String boosterName : config.getConfigurationSection("boosters").getKeys(false))
-			new Booster(config, boosterName);
+			if (boosterName != null)
+				new Booster(config, boosterName);
 	}
 }
