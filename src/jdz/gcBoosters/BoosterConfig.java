@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 
@@ -44,12 +45,14 @@ public class BoosterConfig extends AutoConfig {
 
 	@Override
 	public void onConfigReload(ConfigReloadEvent event) {
+		System.out.print("### booster debug - "+eventApplies(event));
 		if (!eventApplies(event))
 			return;
-		super.onConfigReload(event);
+		reloadConfig();
 
 		Booster.clearBoosters();
-		for (String boosterName : event.getConfig().getConfigurationSection("boosters").getKeys(false))
-			new Booster(event.getConfig(), boosterName);
+		ConfigurationSection boosterSection = event.getConfig().getConfigurationSection("boosters");
+		for (String boosterName : boosterSection.getKeys(false))
+			new Booster(boosterSection.getConfigurationSection(boosterName), boosterName);
 	}
 }

@@ -42,7 +42,7 @@ public class BoosterDatabase extends BukkitDatabase implements Listener {
 			new SQLColumn("serverGroup", SQLColumnType.STRING_128), new SQLColumn("isStopped", SQLColumnType.BOOLEAN),
 			new SQLColumn("isHardStopped", SQLColumnType.BOOLEAN) };
 
-	private final String getAllBoostersQuery;
+	private final String getAllBoostersQuery = "SELECT * FROM " + ownedTable + " WHERE player = '%player%';";
 
 	/**
 	 * Must be initialized after boosterconfig
@@ -64,13 +64,6 @@ public class BoosterDatabase extends BukkitDatabase implements Listener {
 			for (Booster b : Booster.getBoosters())
 				addColumn(ownedTable, new SQLColumn(b.getID(), SQLColumnType.INT_1_BYTE));
 		});
-
-		String query = "SELECT ";
-		for (Booster b : Booster.getBoosters())
-			query += b.getID() + ",";
-		query = query.substring(0, query.length() - 1);
-		query += " FROM " + ownedTable + " WHERE player = '%player%';";
-		getAllBoostersQuery = query;
 
 		Bukkit.getPluginManager().registerEvents(this, GCBoosters.instance);
 	}
@@ -182,12 +175,10 @@ public class BoosterDatabase extends BukkitDatabase implements Listener {
 		if (!isConnected())
 			return boosters;
 
-		String query = getAllBoostersQuery.replaceAll("%player%", player.getName());
-		List<SQLRow> rows = query(query);
+		SQLRow row = query(getAllBoostersQuery.replaceAll("%player%", player.getName())).get(0);
 
-		int i = 0;
 		for (Booster b : Booster.getBoosters())
-			boosters.put(Booster.get(b.getID()), Integer.parseInt(rows.get(0).get(i++)));
+			boosters.put(Booster.get(b.getID()), Integer.parseInt(row.get(b.getID() + "")));
 
 		return boosters;
 	}

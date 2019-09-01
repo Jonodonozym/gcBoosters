@@ -87,10 +87,14 @@
 			<id>spigot-repo</id>
 			<url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
 		</repository>
-        <repository>
-            <id>placeholderapi</id>
-            <url>http://repo.extendedclip.com/content/repositories/placeholderapi/</url>
-        </repository>
+		<repository>
+			<id>placeholderapi</id>
+			<url>http://repo.extendedclip.com/content/repositories/placeholderapi/</url>
+		</repository>
+		<repository>
+			<id>jitpack.io</id>
+			<url>https://jitpack.io</url>
+		</repository>
 	</repositories>
 	<dependencies>
 		<!-- https://mvnrepository.com/artifact/org.projectlombok/lombok -->
@@ -107,16 +111,15 @@
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
-			<groupId>jdz.bukkitUtils</groupId>
+			<groupId>com.github.Jonodonozym</groupId>
 			<artifactId>JonosBukkitUtils</artifactId>
-			<version>1.0</version>
+			<version>1.2a</version>
+		</dependency>
+		<dependency>
+			<groupId>me.clip</groupId>
+			<artifactId>placeholderapi</artifactId>
+			<version>2.9.2</version>
 			<scope>provided</scope>
 		</dependency>
-        <dependency>
-         <groupId>me.clip</groupId>
-          <artifactId>placeholderapi</artifactId>
-          <version>2.9.2</version>
-         <scope>provided</scope>
-        </dependency>
 	</dependencies>
 </project>

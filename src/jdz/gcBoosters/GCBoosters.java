@@ -9,6 +9,7 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.RegisteredListener;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import jdz.bukkitUtils.configuration.ConfigReloadEvent;
 import jdz.bukkitUtils.fileIO.FileLogger;
 import jdz.gcBoosters.commands.admin.ABoosterCommandExecutor;
 import jdz.gcBoosters.commands.member.BoosterCommandExecutor;
@@ -26,6 +27,7 @@ public class GCBoosters extends JavaPlugin {
 		instance = this;
 
 		new BoosterConfig(this).register();
+		new ConfigReloadEvent(this).call();
 
 		new BoosterCommandExecutor(this).register();
 		new ABoosterCommandExecutor(this).register();
@@ -47,10 +49,5 @@ public class GCBoosters extends JavaPlugin {
 			}
 
 		new PlaceholderHook().register();
-	}
-
-	@Override
-	public void onDisable() {
-
 	}
 }
