@@ -57,15 +57,19 @@ public class Booster {
 	private final List<String> commandsOnEnd;
 
 	public void executeStartCommands(OfflinePlayer player) {
-		for (String command : commandsOnStart)
-			if (!command.equals(""))
-				Bukkit.dispatchCommand(Bukkit.getConsoleSender(), withPlaceholders(command, player));
+		Bukkit.getScheduler().runTask(GCBoosters.getInstance(), () -> {
+			for (String command : commandsOnStart)
+				if (!command.equals(""))
+					Bukkit.dispatchCommand(Bukkit.getConsoleSender(), withPlaceholders(command, player));
+		});
 	}
 
 	public void executeEndCommands(OfflinePlayer player) {
+		Bukkit.getScheduler().runTask(GCBoosters.getInstance(), () -> {
 		for (String command : commandsOnEnd)
 			if (!command.equals(""))
 				Bukkit.dispatchCommand(Bukkit.getConsoleSender(), withPlaceholders(command, player));
+		});
 	}
 
 	private String withPlaceholders(String command, OfflinePlayer player) {
